@@ -1,91 +1,83 @@
-import { create, scale, translate } from "./mat3.js";
+import { makeFLetterGeometry } from "../geometryBuilder.js";
+import WebGLUtils from "../webglutils.js";
+import { create as createMat4, perspectiveZO, lookAt } from "../math/mat4.js";
 
-const canvas = document.getElementById("canvas");
-/** @type { WebGL2RenderingContext } */
-const gl = canvas.getContext("webgl2");
+const gl = WebGLUtils.initContext();
 
-// css pixel coordinates
-const positions = new Float32Array([
-  100, 100, 300, 300, 300, 100, 100, 100, 100, 300, 300, 300,
-]);
+const { positions, colors } = makeFLetterGeometry();
 
 const vertexShaderSource = `\
 #version 300 es
-in vec2 position;
+in vec4 position;
+in vec4 color;
 
-uniform mat3 projection;
+out vec4 v_color;
+
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 
 void main() {
-   gl_Position = vec4(projection * vec3(position, 1), 1);
+  v_color = color;
+  gl_Position = projectionMatrix * viewMatrix * position;
 }
 `;
 
 const fragmentShaderSource = `\
 #version 300 es
 precision highp float;
+
+in vec4 v_color;
  
-out vec4 outColor; 
+out vec4 color; 
  
 void main() {
-   outColor = vec4(0, 1, 1, 1);
+  color = v_color;
 }
 `;
 
-const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-gl.shaderSource(vertexShader, vertexShaderSource);
-gl.compileShader(vertexShader);
-if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-  throw new Error(gl.getShaderInfoLog(vertexShader));
-}
-
-const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-gl.shaderSource(fragmentShader, fragmentShaderSource);
-gl.compileShader(fragmentShader);
-if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-  throw new Error(gl.getShaderInfoLog(fragmentShader));
-}
-
-const program = gl.createProgram();
-
-gl.attachShader(program, vertexShader);
-gl.attachShader(program, fragmentShader);
-gl.linkProgram(program);
-if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-  throw new Error(gl.getProgramInfoLog(program));
-}
+const program = WebGLUtils.makeProgram(vertexShaderSource, fragmentShaderSource);
 
 const positionLocation = gl.getAttribLocation(program, "position");
-const projectionLocation = gl.getUniformLocation(program, "projection");
+const colorLocation = gl.getAttribLocation(program, "color");
 
-const positionBuffer = gl.createBuffer();
+const projectionMatrixLocation = gl.getUniformLocation(program, "projectionMatrix");
+const viewMatrixLocation = gl.getUniformLocation(program, "viewMatrix");
 
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+WebGLUtils.createBuffer(positions); //the method return is not needed as the buffer is already binded
 
 gl.enableVertexAttribArray(positionLocation);
-gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+
+WebGLUtils.createBuffer(colors);
+
+gl.enableVertexAttribArray(colorLocation);
+gl.vertexAttribPointer(colorLocation, 3, gl.UNSIGNED_BYTE, true, 0, 0); // normalized: true converts from 0-255 to 0.0-1.0
+
+// PROJECTION
+const fovy = 90 / 180 * Math.PI;
+
+const { width, height } = gl.canvas;
+const aspec = width / height;
+
+
+const projectionMatrix = perspectiveZO(createMat4(), fovy, aspec, 1, 2000);
+
+
+const viewMatrix = lookAt(createMat4(), [0, 300, 300], [0, 0, 0], [0, 1, 0]);
 
 gl.useProgram(program);
 
-const projectionMatrix = create();
+gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
 
-// invert Y
-scale(projectionMatrix, projectionMatrix, [1, -1]);
-//  [-1, 1] to [0, 2]
-translate(projectionMatrix, projectionMatrix, [-1, -1]);
-// [0, 2] to [0, 1]
-scale(projectionMatrix, projectionMatrix, [2, 2]);
-// [0, 1] to css pixel
-scale(projectionMatrix, projectionMatrix, [
-  1 / gl.drawingBufferWidth,
-  1 / gl.drawingBufferHeight,
-]);
-// equivalent to mat3 projection
-
-gl.uniformMatrix3fv(projectionLocation, false, projectionMatrix);
+gl.enable(gl.CULL_FACE);
+gl.cullFace(gl.BACK);
+gl.frontFace(gl.CCW);
+gl.enable(gl.DEPTH_TEST);
+gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 gl.clearColor(0.5, 0.5, 0.5, 1);
 
-gl.clear(gl.COLOR_BUFFER_BIT);
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+gl.drawArrays(gl.TRIANGLES, 0, positions.length / 3);
