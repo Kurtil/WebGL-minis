@@ -1,4 +1,4 @@
-import WebGLUtils from "../../webglutils.js";
+import WebGLUtils from "../webglutils.js";
 
 const gl = WebGLUtils.initContext();
 
