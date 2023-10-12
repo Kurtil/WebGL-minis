@@ -63,7 +63,7 @@ const aspec = width / height;
 const projectionMatrix = perspectiveZO(createMat4(), fovy, aspec, 1, 2000);
 
 
-const viewMatrix = lookAt(createMat4(), [0, 300, 300], [0, 0, 0], [0, 1, 0]);
+const viewMatrix = lookAt(createMat4(), [0, 0, 300], [0, 0, 0], [0, 1, 0]);
 
 gl.useProgram(program);
 

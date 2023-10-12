@@ -83,7 +83,7 @@ const WebGLUtils = {
    */
   initContext(canvasId = "canvas") {
     const canvas = document.getElementById(canvasId);
-    gl = canvas.getContext("webgl2");
+    gl = canvas.getContext("webgl2", { antialias: false });
 
     return gl;
   },
