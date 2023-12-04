@@ -1,6 +1,6 @@
 import WebGLUtils from "../webglutils.js";
 
-const gl = WebGLUtils.initContext();
+const gl = WebGLUtils.gl;
 
 /**
  * Set data to the binded array buffer

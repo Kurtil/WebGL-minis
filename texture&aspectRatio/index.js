@@ -8,7 +8,7 @@ await new Promise((resolve, reject) => {
 
 import WebGLUtils from "../webglutils.js";
 
-const gl = WebGLUtils.initContext();
+const gl = WebGLUtils.gl;
 
 const vertexShaderSource = `\
     #version 300 es

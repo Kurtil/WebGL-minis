@@ -1,7 +1,6 @@
-/**
- * @type { WebGL2RenderingContext }
- */
-let gl = null;
+const canvas = document.getElementById("canvas");
+/** @type { WebGL2RenderingContext } */
+const gl = canvas.getContext("webgl2", { antialias: false });
 
 /**
  * @param { string } vertexShaderSource
@@ -9,7 +8,7 @@ let gl = null;
  *
  * @returns { WebGLProgram }
  */
-function makeProgram(vertexShaderSource, fragmentShaderSource) {
+function makeProgram(vertexShaderSource, fragmentShaderSource, transformFeedbackVaryings = []) {
   const vertexShader = gl.createShader(gl.VERTEX_SHADER);
   gl.shaderSource(vertexShader, vertexShaderSource);
   gl.compileShader(vertexShader);
@@ -28,6 +27,11 @@ function makeProgram(vertexShaderSource, fragmentShaderSource) {
 
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
+
+  if (transformFeedbackVaryings.length) {
+    gl.transformFeedbackVaryings(program, transformFeedbackVaryings, gl.SEPARATE_ATTRIBS);
+  }
+
   gl.linkProgram(program);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     throw new Error(gl.getProgramInfoLog(program));
@@ -77,18 +81,9 @@ function createBuffer(data, usage = gl.STATIC_DRAW, target = gl.ARRAY_BUFFER) {
 }
 
 const WebGLUtils = {
-  /**
-   * @param { string } canvasId
-   * @returns { WebGL2RenderingContext }
-   */
-  initContext(canvasId = "canvas") {
-    const canvas = document.getElementById(canvasId);
-    gl = canvas.getContext("webgl2", { antialias: false });
-
-    return gl;
-  },
   makeProgram,
   createBuffer,
+  gl,
 };
 
 export default WebGLUtils;

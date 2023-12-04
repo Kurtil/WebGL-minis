@@ -2,7 +2,7 @@ import WebGLUtils from "../webglutils.js";
 
 import { multiply, rotation, scale, translation } from "../math/mat3.js";
 
-const gl = WebGLUtils.initContext();
+const gl = WebGLUtils.gl;
 
 /**
  * Set data to the binded array buffer

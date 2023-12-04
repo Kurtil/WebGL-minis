@@ -2,7 +2,7 @@ import { makeFLetterGeometry } from "../geometryBuilder.js";
 import WebGLUtils from "../webglutils.js";
 import { create as createMat4, perspectiveZO, lookAt } from "../math/mat4.js";
 
-const gl = WebGLUtils.initContext();
+const gl = WebGLUtils.gl;
 
 const { positions, colors } = makeFLetterGeometry();
 
