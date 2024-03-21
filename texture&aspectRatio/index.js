@@ -41,9 +41,9 @@ const fragmentShaderSource = `\
      
     void main() {
         float textureAspectRatio = u_texture_resolution.y / u_texture_resolution.x;
-        float screenAspectRatio = u_resolution.x / u_resolution.y;
+        float screenAspectRatio = u_resolution.y / u_resolution.x;
 
-        outColor = texture(u_texture, v_texCoord * vec2(textureAspectRatio * screenAspectRatio, 1.0));
+        outColor = texture(u_texture, v_texCoord * vec2(textureAspectRatio / screenAspectRatio, 1.0));
     }
     `;
 

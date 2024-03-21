@@ -8,7 +8,19 @@ const gl = canvas.getContext("webgl2", { antialias: false });
  *
  * @returns { WebGLProgram }
  */
-function makeProgram(vertexShaderSource, fragmentShaderSource, transformFeedbackVaryings = []) {
+function makeProgram(vertexShaderSource, fragmentShaderSource, transformFeedbackVaryings = [], transformFeedbackVaryingsBufferMode = gl.SEPARATE_ATTRIBS) {
+  if (typeof vertexShaderSource !== "string" || typeof fragmentShaderSource !== "string") {
+    throw new Error("Both vertexShaderSource and fragmentShaderSource must be strings");
+  }
+
+  if (!vertexShaderSource.startsWith("#version 300 es")) {
+    vertexShaderSource = `#version 300 es\n\n${vertexShaderSource}`;
+  }
+
+  if (!fragmentShaderSource.startsWith("#version 300 es")) {
+    fragmentShaderSource = `#version 300 es\n\n${fragmentShaderSource}`;
+  }
+
   const vertexShader = gl.createShader(gl.VERTEX_SHADER);
   gl.shaderSource(vertexShader, vertexShaderSource);
   gl.compileShader(vertexShader);
@@ -29,7 +41,7 @@ function makeProgram(vertexShaderSource, fragmentShaderSource, transformFeedback
   gl.attachShader(program, fragmentShader);
 
   if (transformFeedbackVaryings.length) {
-    gl.transformFeedbackVaryings(program, transformFeedbackVaryings, gl.SEPARATE_ATTRIBS);
+    gl.transformFeedbackVaryings(program, transformFeedbackVaryings, transformFeedbackVaryingsBufferMode);
   }
 
   gl.linkProgram(program);
@@ -38,21 +50,6 @@ function makeProgram(vertexShaderSource, fragmentShaderSource, transformFeedback
   }
 
   return program;
-}
-
-/**
- *
- * @param { WebGLProgram } program
- */
-function progUtil(program) {
-  const activeAttributes = gl.getProgramParameter(
-    program,
-    gl.ACTIVE_ATTRIBUTES
-  );
-  for (let i = 0; i < activeAttributes; ++i) {
-    const { name, type, size } = gl.getActiveAttrib(program, i);
-  }
-  const activeUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
 }
 
 /**
@@ -71,7 +68,7 @@ function progUtil(program) {
  *
  * @returns { WebGLBuffer }
  */
-function createBuffer(data, usage = gl.STATIC_DRAW, target = gl.ARRAY_BUFFER) {
+function makeBuffer(data, usage = gl.STATIC_DRAW, target = gl.ARRAY_BUFFER) {
   const buffer = gl.createBuffer();
 
   gl.bindBuffer(target, buffer);
@@ -80,10 +77,8 @@ function createBuffer(data, usage = gl.STATIC_DRAW, target = gl.ARRAY_BUFFER) {
   return buffer;
 }
 
-const WebGLUtils = {
+export {
   makeProgram,
-  createBuffer,
+  makeBuffer,
   gl,
 };
-
-export default WebGLUtils;

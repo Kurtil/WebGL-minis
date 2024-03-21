@@ -1,10 +1,6 @@
-import WebGLUtils from "../webglutils.js";
+import { gl, makeProgram, makeBuffer } from "../../webglutils.js";
 
-const gl = WebGLUtils.gl;
-
-const vertexShaderSource = `\
-#version 300 es
-
+const vertexShaderSource = `
 in vec2 position;
 in vec3 color;
 
@@ -16,8 +12,7 @@ void main()
     gl_Position = vec4(position, 0.0, 1.0);
 }`;
 
-const fragmentShaderSource = `\
-#version 300 es
+const fragmentShaderSource = `
 precision mediump float;
 
 in vec3 v_color;
@@ -30,21 +25,19 @@ void main()
 }`;
 
 
-const program = WebGLUtils.makeProgram(
-    vertexShaderSource,
-    fragmentShaderSource
+const program = makeProgram(
+  vertexShaderSource,
+  fragmentShaderSource
 );
 
-const positionAndColorBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, positionAndColorBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-    -0.5, -0.5,
-    1, 0, 0,
-    0.5, -0.5,
-    0, 1, 0,
-    0, 0.5,
-    0, 1, 0,
-]), gl.STATIC_DRAW);
+makeBuffer(new Float32Array([
+  -0.5, -0.5, // position
+  1, 0, 0, // color
+  0.5, -0.5,
+  0, 1, 0,
+  0, 0.5,
+  0, 0, 1,
+]));
 
 const positionLocation = gl.getAttribLocation(program, "position");
 gl.enableVertexAttribArray(positionLocation);
@@ -56,6 +49,5 @@ gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 5 * Float32Array.BYTES
 
 // RENDERING
 gl.useProgram(program);
-gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
 gl.drawArrays(gl.TRIANGLES, 0, 3);

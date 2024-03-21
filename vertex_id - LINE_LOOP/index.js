@@ -1,6 +1,6 @@
 import WebGLUtils from "../webglutils.js";
 
-const gl = WebGLUtils.gl;
+const {gl, makeProgram } = WebGLUtils;
 
 const vertexShaderSource = `\
 #version 300 es
@@ -32,7 +32,7 @@ void main()
 }`;
 
 
-const program = WebGLUtils.makeProgram(
+const program = makeProgram(
     vertexShaderSource,
     fragmentShaderSource
 );
