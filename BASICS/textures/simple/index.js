@@ -1,5 +1,9 @@
 import { gl, makeProgram, makeBuffer } from "../../../webglutils.js";
 
+const DATA_FROM_PIXEL_BUFFER = false;
+
+console.log("DATA_FROM_PIXEL_BUFFER : ", DATA_FROM_PIXEL_BUFFER);
+
 const vertexShaderSource = `
 in vec4 position;
 in vec2 texcoord;
@@ -26,7 +30,6 @@ void main()
     fragColor = texture(u_texture, v_texcoord);
 }`;
 
-
 const program = makeProgram(
   vertexShaderSource,
   fragmentShaderSource
@@ -50,10 +53,15 @@ gl.activeTexture(gl.TEXTURE0 + textureUnit);
 gl.bindTexture(gl.TEXTURE_2D, texture);
 
 const texuteDataSize = 5;
+
 const textureData = generateRandomTextureData(texuteDataSize);
-gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1); // seems mandatory to make texture with size not power of 4
-// TODO read https://stackoverflow.com/questions/11042027/glpixelstoreigl-unpack-alignment-1-disadvantages and https://www.khronos.org/opengl/wiki/Pixel_Transfer#Pixel_layout
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, texuteDataSize, texuteDataSize, 0, gl.RGB, gl.UNSIGNED_BYTE, textureData);
+
+if (DATA_FROM_PIXEL_BUFFER) {
+  makeBuffer(textureData, gl.STATIC_DRAW, gl.PIXEL_UNPACK_BUFFER);
+}
+
+gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, texuteDataSize, texuteDataSize, 0, gl.RGB, gl.UNSIGNED_BYTE, DATA_FROM_PIXEL_BUFFER ? 0 : textureData);
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4); // Default value
 
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); // Mandatory because default value use bitmap that are not generated here

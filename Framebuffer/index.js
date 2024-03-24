@@ -1,13 +1,10 @@
 import { makeFLetterGeometry } from "../geometryBuilder.js";
-import WebGLUtils from "../webglutils.js";
+import { gl, makeBuffer, makeProgram } from "../webglutils.js";
 import { create as createMat4, perspectiveZO, lookAt } from "../math/mat4.js";
-
-const gl = WebGLUtils.gl;
 
 const { positions, colors } = makeFLetterGeometry();
 
-const vertexShaderSource = `\
-#version 300 es
+const vertexShaderSource = `
 in vec4 position;
 in vec4 color;
 
@@ -22,8 +19,7 @@ void main() {
 }
 `;
 
-const fragmentShaderSource = `\
-#version 300 es
+const fragmentShaderSource = `
 precision highp float;
 
 in vec4 v_color;
@@ -35,7 +31,7 @@ void main() {
 }
 `;
 
-const program = WebGLUtils.makeProgram(vertexShaderSource, fragmentShaderSource);
+const program = makeProgram(vertexShaderSource, fragmentShaderSource);
 
 const positionLocation = gl.getAttribLocation(program, "position");
 const colorLocation = gl.getAttribLocation(program, "color");
@@ -43,12 +39,12 @@ const colorLocation = gl.getAttribLocation(program, "color");
 const projectionMatrixLocation = gl.getUniformLocation(program, "projectionMatrix");
 const viewMatrixLocation = gl.getUniformLocation(program, "viewMatrix");
 
-WebGLUtils.createBuffer(positions); //the method return is not needed as the buffer is already binded
+makeBuffer(positions);
 
 gl.enableVertexAttribArray(positionLocation);
 gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
 
-WebGLUtils.createBuffer(colors);
+makeBuffer(colors);
 
 gl.enableVertexAttribArray(colorLocation);
 gl.vertexAttribPointer(colorLocation, 3, gl.UNSIGNED_BYTE, true, 0, 0); // normalized: true converts from 0-255 to 0.0-1.0
