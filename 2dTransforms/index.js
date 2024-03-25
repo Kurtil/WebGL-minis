@@ -1,6 +1,4 @@
-import WebGLUtils from "../webglutils.js";
-
-const gl = WebGLUtils.gl;
+import { gl, makeProgram } from "../webglutils.js";
 
 /**
  * Set data to the binded array buffer
@@ -23,8 +21,7 @@ function setRectangle(x = 0, y = 0, width = 100, height = 50) {
   );
 }
 
-const vertexShaderSource = `\
-#version 300 es
+const vertexShaderSource = `
 in vec2 position;
 
 uniform vec2 resolution;
@@ -48,8 +45,7 @@ void main() {
 }
 `;
 
-const fragmentShaderSource = `\
-#version 300 es
+const fragmentShaderSource = `
 precision highp float;
  
 out vec4 outColor; 
@@ -59,7 +55,7 @@ void main() {
 }
 `;
 
-const program = WebGLUtils.makeProgram(
+const program = makeProgram(
   vertexShaderSource,
   fragmentShaderSource
 );
