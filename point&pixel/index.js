@@ -1,9 +1,6 @@
-import WebGLUtils from "../webglutils.js";
+import { gl, makeProgram } from "../webglutils.js";
 
-const gl = WebGLUtils.gl;
-
-const vertexShaderSource = `\
-#version 300 es
+const vertexShaderSource = `
 in vec2 position;
 
 uniform vec2 resolution;
@@ -17,8 +14,7 @@ void main() {
 }
 `;
 
-const fragmentShaderSource = `\
-#version 300 es
+const fragmentShaderSource = `
 precision highp float;
  
 out vec4 outColor; 
@@ -28,7 +24,7 @@ void main() {
 }
 `;
 
-const program = WebGLUtils.makeProgram(
+const program = makeProgram(
   vertexShaderSource,
   fragmentShaderSource
 );
