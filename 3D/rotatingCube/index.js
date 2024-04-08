@@ -1,6 +1,6 @@
-import { makeCube } from "../geometryBuilder.js";
-import { gl, makeBuffer, makeProgram } from "../webglutils.js";
-import { create as createMat4, perspectiveZO, lookAt, rotateY, rotateX } from "../math/mat4.js";
+import { makeCube } from "../../geometryBuilder.js";
+import { gl, makeBuffer, makeProgram } from "../../webglutils.js";
+import { create as createMat4, perspectiveZO, lookAt, rotateY, rotateX } from "../../math/mat4.js";
 
 const { positions, colors } = makeCube();
 
@@ -9,7 +9,6 @@ in vec4 position;
 in vec4 color;
 
 out vec4 v_color;
-out vec4 v_position;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -18,7 +17,6 @@ uniform mat4 modelMatrix;
 void main() {
   v_color = color;
   gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
-  v_position = gl_Position;
 }
 `;
 
@@ -26,16 +24,11 @@ const fragmentShaderSource = `
 precision highp float;
 
 in vec4 v_color;
-in vec4 v_position;
  
 out vec4 color; 
  
 void main() {
-  vec3 fdx = vec3(dFdx(v_position.x),dFdx(v_position.y),dFdx(v_position.z));    
-  vec3 fdy = vec3(dFdy(v_position.x),dFdy(v_position.y),dFdy(v_position.z));
-
-  vec3 N = normalize(cross(fdx,fdy)); 
-  color = vec4(N,1.0);
+  color = v_color;
 }
 `;
 

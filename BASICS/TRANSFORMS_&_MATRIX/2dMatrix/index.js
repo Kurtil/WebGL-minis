@@ -1,4 +1,6 @@
-import { gl, makeProgram } from "../webglutils.js";
+import { gl, makeProgram } from "../../../webglutils.js";
+
+import { multiply, rotation, scale, translation } from "../../../math/mat3.js";
 
 /**
  * Set data to the binded array buffer
@@ -25,17 +27,12 @@ const vertexShaderSource = `
 in vec2 position;
 
 uniform vec2 resolution;
-uniform vec2 translate;
-uniform vec2 rotation;
-uniform vec2 scale;
+uniform mat3 matrix;
 
 void main() {
-  //scale
-  vec2 scaledPosition = position * scale;
-  // rotation
-  vec2 rotatedPosition = vec2(scaledPosition.x * rotation.y + scaledPosition.y * rotation.x, scaledPosition.y * rotation.y - scaledPosition.x * rotation.x);
+
   // css to => 0 - 1
-  vec2 zeroToOne = (rotatedPosition + translate) / resolution;
+  vec2 zeroToOne = (matrix * vec3(position, 1)).xy / resolution;
   // 0 - 1 => 0 - 2
   vec2 zeroToTwo = zeroToOne * 2.0;
   // 0 - 2 => -1 - 1
@@ -63,9 +60,7 @@ const program = makeProgram(
 const positionLocation = gl.getAttribLocation(program, "position");
 
 const resolutionLocation = gl.getUniformLocation(program, "resolution");
-const translateLocation = gl.getUniformLocation(program, "translate");
-const rotationLocation = gl.getUniformLocation(program, "rotation");
-const scaleLocation = gl.getUniformLocation(program, "scale");
+const matrixLocation = gl.getUniformLocation(program, "matrix");
 
 const positionBuffer = gl.createBuffer();
 
@@ -84,12 +79,20 @@ let sy = 1;
 function draw() {
   gl.useProgram(program);
 
-  const radAngle = (angle / 180) * Math.PI;
-
   gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
-  gl.uniform2f(translateLocation, dx, dy);
-  gl.uniform2f(rotationLocation, Math.cos(radAngle), Math.sin(radAngle));
-  gl.uniform2f(scaleLocation, sx, sy);
+
+  const translateMatrix = translation(dx, dy);
+  const rotationMatrix = rotation((angle / 180) * Math.PI);
+  const scaleMatrix = scale(sx, sy);
+
+  gl.uniformMatrix3fv(
+    matrixLocation,
+    false,
+    multiply(
+      multiply(multiply(translation(-50, -25), scaleMatrix), rotationMatrix),
+      translateMatrix
+      )
+    );
 
   gl.clearColor(0.5, 0.5, 0.5, 1);
 

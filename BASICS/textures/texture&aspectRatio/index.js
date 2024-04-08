@@ -6,12 +6,9 @@ await new Promise((resolve, reject) => {
   image.src = "tree.webp";
 });
 
-import WebGLUtils from "../webglutils.js";
+import { gl, makeBuffer, makeProgram } from "../../../webglutils.js";
 
-const gl = WebGLUtils.gl;
-
-const vertexShaderSource = `\
-    #version 300 es
+const vertexShaderSource = `
     in vec2 position;
     in vec2 texCoord;
 
@@ -27,8 +24,7 @@ const vertexShaderSource = `\
     }
     `;
 
-const fragmentShaderSource = `\
-    #version 300 es
+const fragmentShaderSource = `
     precision highp float;
      
     uniform sampler2D u_texture;
@@ -47,14 +43,14 @@ const fragmentShaderSource = `\
     }
     `;
 
-const program = WebGLUtils.makeProgram(
+const program = makeProgram(
   vertexShaderSource,
   fragmentShaderSource
 );
 
 const positionLocation = gl.getAttribLocation(program, "position");
 const positions = new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]);
-WebGLUtils.createBuffer(positions);
+makeBuffer(positions);
 gl.enableVertexAttribArray(positionLocation);
 gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
@@ -62,12 +58,12 @@ const texCoordLocation = gl.getAttribLocation(program, "texCoord");
 const textureCoordinates = new Float32Array([
   0, 0, 1, 0, 1, 1, 0, 1
 ]);
-WebGLUtils.createBuffer(textureCoordinates);
+makeBuffer(textureCoordinates);
 gl.enableVertexAttribArray(texCoordLocation);
 gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
 
 const index = new Uint16Array([0, 1, 2, 0, 2, 3]);
-WebGLUtils.createBuffer(index, gl.STATIC_DRAW, gl.ELEMENT_ARRAY_BUFFER);
+makeBuffer(index, gl.STATIC_DRAW, gl.ELEMENT_ARRAY_BUFFER);
 
 const texture = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, texture);
