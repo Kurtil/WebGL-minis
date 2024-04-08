@@ -1,6 +1,10 @@
-import { gl } from "../../utils/webglutils.js";
+
+import { gl as importedGL } from "webglutils";
 import makeGeometryProgram from "./programs/geometryProgram.js";
 import makeQuadProgram from "./programs/quadProgram.js";
+
+/** @type { WebGL2RenderingContext } */
+const gl = importedGL;
 
 const drawGeometry = makeGeometryProgram();
 const drawQuad = makeQuadProgram();
