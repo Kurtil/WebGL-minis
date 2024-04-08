@@ -1,4 +1,4 @@
-import { gl, makeProgram, makeBuffer } from "../../../webglutils.js";
+import { gl, makeProgram, makeBuffer } from "webglutils";
 
 const DATA_FROM_PIXEL_BUFFER = false;
 

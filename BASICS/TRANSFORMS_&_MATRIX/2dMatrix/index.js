@@ -1,6 +1,6 @@
-import { gl, makeProgram } from "../../../webglutils.js";
+import { gl, makeProgram } from "webglutils";
 
-import { multiply, rotation, scale, translation } from "../../../math/mat3.js";
+import { multiply, rotation, scale, translation } from "../../../utils/math/mat3.js";
 
 /**
  * Set data to the binded array buffer

@@ -1,4 +1,4 @@
-import { gl, makeProgram } from "../../webglutils.js";
+import { gl, makeProgram } from "webglutils";
 
 const vertexShaderSource = `
 void main()

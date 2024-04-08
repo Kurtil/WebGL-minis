@@ -6,7 +6,7 @@ await new Promise((resolve, reject) => {
   image.src = "tree.webp";
 });
 
-import { gl, makeBuffer, makeProgram } from "../../../webglutils.js";
+import { gl, makeBuffer, makeProgram } from "webglutils";
 
 const vertexShaderSource = `
     in vec2 position;

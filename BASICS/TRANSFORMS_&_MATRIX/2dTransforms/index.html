@@ -1,40 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        html, body {
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="canvas" height="400" width="400"></canvas>
-    <div style="display: flex; flex-direction: column;">
-        <div>
-            <input type="range" name="x" id="x" max="400", min="0" value="0">
-            <label for="x">X</label>
-        </div>
-        <div>
-            <input type="range" name="y" id="y" max="400", min="0" value="0">
-            <label for="y">Y</label>
-        </div>
-        <div>
-            <input type="range" name="rotation" id="rotation" max="360", min="0" value="90">
-            <label for="rotation">Rotation</label>
-        </div>
-        <div>
-            <input type="range" name="scaleX" id="scaleX" max="3", min="0" value="1" step="0.01">
-            <label for="scaleX">Scale X</label>
-        </div>
-        <div>
-            <input type="range" name="scaleY" id="scaleY" max="3", min="0" value="1" step="0.01">
-            <label for="scaleY">Scale Y</label>
-        </div>
-    </div>
 
-    <script type="module" src="./index.js" ></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+  </style>
+  <script type="importmap">
+          {
+            "imports": {
+              "webglutils": "/utils/webglutils.js"
+            }
+          }
+        </script>
+</head>
+
+<body>
+  <canvas id="canvas" height="400" width="400"></canvas>
+  <div style="display: flex; flex-direction: column;">
+    <div>
+      <input type="range" name="x" id="x" max="400" , min="0" value="0">
+      <label for="x">X</label>
+    </div>
+    <div>
+      <input type="range" name="y" id="y" max="400" , min="0" value="0">
+      <label for="y">Y</label>
+    </div>
+    <div>
+      <input type="range" name="rotation" id="rotation" max="360" , min="0" value="90">
+      <label for="rotation">Rotation</label>
+    </div>
+    <div>
+      <input type="range" name="scaleX" id="scaleX" max="3" , min="0" value="1" step="0.01">
+      <label for="scaleX">Scale X</label>
+    </div>
+    <div>
+      <input type="range" name="scaleY" id="scaleY" max="3" , min="0" value="1" step="0.01">
+      <label for="scaleY">Scale Y</label>
+    </div>
+  </div>
+
+  <script type="module" src="./index.js"></script>
 </body>
+
 </html>

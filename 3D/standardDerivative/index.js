@@ -1,6 +1,6 @@
-import { makeCube } from "../../geometryBuilder.js";
-import { gl, makeBuffer, makeProgram } from "../../webglutils.js";
-import { create as createMat4, perspectiveZO, lookAt, rotateY, rotateX } from "../../math/mat4.js";
+import { makeCube } from "../../utils/geometryBuilder.js";
+import { gl, makeBuffer, makeProgram } from "../../utils/webglutils.js";
+import { create as createMat4, perspectiveZO, lookAt, rotateY, rotateX } from "../../utils/math/mat4.js";
 
 const { positions, colors } = makeCube();
 

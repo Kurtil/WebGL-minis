@@ -1,4 +1,4 @@
-import { gl, makeProgram, makeBuffer } from "../../webglutils.js";
+import { gl, makeProgram, makeBuffer } from "webglutils";
 
 const vertexShaderSource = `
 in vec2 position;
