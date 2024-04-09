@@ -1,0 +1,1 @@
+This Framebuffer example is the basis for other multi stage processing examples and can be used as a starting template.

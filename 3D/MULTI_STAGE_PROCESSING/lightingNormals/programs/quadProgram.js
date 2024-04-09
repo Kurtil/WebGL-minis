@@ -17,13 +17,33 @@ export default function makeQuadProgram() {
   precision highp float;
 
   in vec2 v_uv;
-
+  
   out vec4 color;
-
+  
   uniform sampler2D colorTexture;
+  uniform highp isampler2D normalTexture;
 
+  vec3 lightDirection = vec3(0.0, 1.0, 0.0);
+
+  float unpackIntToFloat(int value) {
+    return float(value) / 2147483647.0;
+}
+  
   void main() {
-    color = texture(colorTexture, v_uv);
+    // Convert the integer normal data to float
+    ivec3 packedNormal = texture(normalTexture, v_uv).rgb;
+    vec3 normal;
+    normal.x = unpackIntToFloat(packedNormal.x);
+    normal.y = unpackIntToFloat(packedNormal.y);
+    normal.z = unpackIntToFloat(packedNormal.z);
+    normal = normalize(normal);
+  
+    float lightIntensity = dot(normal, lightDirection);
+    lightIntensity = clamp(lightIntensity, 0.0, 1.0);
+
+    vec4 baseColor = texture(colorTexture, v_uv);
+    baseColor.rgb *= lightIntensity;
+    color = baseColor;
   }
   `;
 
@@ -34,7 +54,8 @@ export default function makeQuadProgram() {
   const positionLocation = gl.getAttribLocation(program, "position");
   const uvLocation = gl.getAttribLocation(program, "uv");
 
-  const textureLocation = gl.getUniformLocation(program, "colorTexture");
+  const colorTextureLocation = gl.getUniformLocation(program, "colorTexture");
+  const normalTextureLocation = gl.getUniformLocation(program, "normalTexture");
 
   const positions = new Float32Array([
     -1, -1,
@@ -60,17 +81,22 @@ export default function makeQuadProgram() {
 
   gl.useProgram(program);
 
-  gl.uniform1i(textureLocation, 0);
+  const colorTextureUnit = 4;
+  gl.uniform1i(colorTextureLocation, colorTextureUnit);
+  const normalTextureUnit = 5;
+  gl.uniform1i(normalTextureLocation, normalTextureUnit);
 
-  return (colorTexture) => {
+  return (colorTexture, normalTexture) => {
     gl.useProgram(program);
     gl.bindVertexArray(vao);
 
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.CULL_FACE);
 
-    gl.activeTexture(gl.TEXTURE0);
+    gl.activeTexture(gl.TEXTURE0 + colorTextureUnit);
     gl.bindTexture(gl.TEXTURE_2D, colorTexture);
+    gl.activeTexture(gl.TEXTURE0 + normalTextureUnit);
+    gl.bindTexture(gl.TEXTURE_2D, normalTexture);
 
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
   };
