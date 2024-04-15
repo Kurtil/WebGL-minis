@@ -1,6 +1,6 @@
 const canvas = document.getElementById("canvas");
 /** @type { WebGL2RenderingContext } */
-const gl = canvas.getContext("webgl2", { antialias: false });
+const gl = canvas.getContext("webgl2", { antialias: false, stencil: true });
 
 /**
  * @param { string } vertexShaderSource
