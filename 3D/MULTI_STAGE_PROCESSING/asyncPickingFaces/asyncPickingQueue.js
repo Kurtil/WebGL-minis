@@ -27,7 +27,8 @@ export default function makeAsyncPickingQueue(gl) {
         pickPositionRequest = null;
 
         const pixelData = await pixelReader.read(x, y);
-        console.log("pixelData: ", pixelData[0]);
+
+        return pixelData[0];
     }
   };
 }

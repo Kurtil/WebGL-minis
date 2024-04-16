@@ -38,10 +38,14 @@ export default function makeAsyncPixelReader(gl) {
 
       // read the pixel data from the buffer
       gl.bindBuffer(gl.PIXEL_PACK_BUFFER, readBuffer);
-      gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, dstBuffer, 0); // TODO not need to read the whole buffer because only the red channel is needed... ?
+      // TODO chrome warning buffer read not waiting for fence
+      gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, dstBuffer, 0, 1); // only one byte needed... read only 1 byte ? :P
       gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
 
       return dstBuffer;
+    },
+    destroy() {
+      gl.deleteBuffer(readBuffer);
     }
   }
 
