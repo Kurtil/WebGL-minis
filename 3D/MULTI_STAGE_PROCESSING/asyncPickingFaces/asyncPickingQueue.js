@@ -1,3 +1,5 @@
+import makeAsyncPixelReader from "./asyncReadPixel.js";
+
 /**
  * @param { WebGL2RenderingContext } gl 
  * @returns 
@@ -15,19 +17,17 @@ export default function makeAsyncPickingQueue(gl) {
     pickPositionRequest = { x, y };
   });
 
-  const pixelBuffer = new Uint32Array(4);
+  const pixelReader = makeAsyncPixelReader(gl);
 
   return {
-    flush() {
+    async flush() {
       if (!pickPositionRequest) return;
 
         const { x, y } = pickPositionRequest;
         pickPositionRequest = null;
 
-        gl.readBuffer(gl.COLOR_ATTACHMENT1);
-        gl.readPixels(x, gl.canvas.height - y, 1, 1, gl.RGBA_INTEGER, gl.UNSIGNED_INT, pixelBuffer);
-
-        console.log("Picked vertex id: ", pixelBuffer[0]);
+        const pixelData = await pixelReader.read(x, y);
+        console.log("pixelData: ", pixelData[0]);
     }
   };
 }
