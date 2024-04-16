@@ -11,7 +11,11 @@ export default function makeAsyncPixelReader(gl) {
       gl.bindBuffer(gl.PIXEL_PACK_BUFFER, readBuffer);
       gl.bufferData(gl.PIXEL_PACK_BUFFER, dstBuffer.byteLength, gl.STREAM_READ);
       gl.readBuffer(gl.COLOR_ATTACHMENT1);
-      gl.readPixels(x, gl.canvas.height - y, 1, 1, gl.RGBA_INTEGER, gl.UNSIGNED_INT, 0);
+
+      const format = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
+      const type = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
+
+      gl.readPixels(x, gl.canvas.height - y, 1, 1, format, type, 0);
       gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
 
       // wait the fence
