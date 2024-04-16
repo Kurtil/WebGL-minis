@@ -3,7 +3,7 @@
  */
 export default function makeAsyncPixelReader(gl) {
   const readBuffer = gl.createBuffer();
-  const dstBuffer = new Uint32Array(4);
+  const dstBuffer = new Uint8Array(1);
 
   return {
     async read(x, y) {
@@ -42,8 +42,7 @@ export default function makeAsyncPixelReader(gl) {
 
       // read the pixel data from the buffer
       gl.bindBuffer(gl.PIXEL_PACK_BUFFER, readBuffer);
-      // TODO chrome warning buffer read not waiting for fence
-      gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, dstBuffer, 0, 1); // only one byte needed... read only 1 byte ? :P
+      gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, dstBuffer);
       gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
 
       return dstBuffer;
