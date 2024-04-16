@@ -6,11 +6,11 @@ import makeAsyncPixelReader from "./asyncReadPixel.js";
  */
 export default function makeAsyncPickingQueue(gl) {
 
-  const { top, left } = gl.canvas.getBoundingClientRect(); // not changing
-
   let pickPositionRequest = null;
 
   gl.canvas.addEventListener("mousemove", (event) => {
+    const { top, left } = gl.canvas.getBoundingClientRect();
+
     const x = event.clientX - left;
     const y = event.clientY - top;
 
@@ -23,12 +23,12 @@ export default function makeAsyncPickingQueue(gl) {
     async flush() {
       if (!pickPositionRequest) return;
 
-        const { x, y } = pickPositionRequest;
-        pickPositionRequest = null;
+      const { x, y } = pickPositionRequest;
+      pickPositionRequest = null;
 
-        const pixelData = await pixelReader.read(x, y);
+      const pixelData = await pixelReader.read(x, y);
 
-        return pixelData[0];
+      return pixelData[0];
     }
   };
 }
