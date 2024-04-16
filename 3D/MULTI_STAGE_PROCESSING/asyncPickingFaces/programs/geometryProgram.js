@@ -13,22 +13,22 @@ export default function makeGeometryProgram() {
   in vec4 color;
   
   out vec4 v_color;
-  flat out int v_vertexId;
+  flat out int v_faceId;
   
   uniform mat4 projectionMatrix;
   uniform mat4 viewMatrix;
   uniform mat4 modelMatrix;
 
-  uniform int hoveredVertexId;
+  uniform int hoveredFaceId;
   
   void main() {
-    // test if hoveredVertexId is from the current face
+    // test if faceId is from the current face
     vec4 newColor = color;
-    if (hoveredVertexId != 0 && (hoveredVertexId - 1) / 6 == gl_VertexID / 6) {
+    if (hoveredFaceId != 0 && (hoveredFaceId - 1) == gl_VertexID / 6) {
       newColor = vec4(1, 0, 0, 1);
     }
     v_color = newColor;
-    v_vertexId = gl_VertexID + 1;
+    v_faceId = (gl_VertexID / 6) + 1;
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
   }
   `;
@@ -38,14 +38,14 @@ export default function makeGeometryProgram() {
   precision highp int;
   
   in vec4 v_color;
-  flat in int v_vertexId;
+  flat in int v_faceId;
    
   layout(location = 0) out vec4 color; 
   layout(location = 1) out uint vertexId;
    
   void main() {
     color = v_color;
-    vertexId = uint(v_vertexId);
+    vertexId = uint(v_faceId);
   }
   `;
 
@@ -60,7 +60,7 @@ export default function makeGeometryProgram() {
   const viewMatrixLocation = gl.getUniformLocation(program, "viewMatrix");
   const modelMatrixLocation = gl.getUniformLocation(program, "modelMatrix");
 
-  const hoveredVertexIdLocation = gl.getUniformLocation(program, "hoveredVertexId");
+  const hoveredFaceIdLocation = gl.getUniformLocation(program, "hoveredFaceId");
 
   makeBuffer(positions);
 
@@ -90,7 +90,7 @@ export default function makeGeometryProgram() {
   gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix);
   gl.uniformMatrix4fv(modelMatrixLocation, false, modelMatrix);
 
-  return (hoveredVertexId = 0) => {
+  return (hoveredFaceId = 0) => {
     gl.useProgram(program);
     gl.bindVertexArray(vao);
 
@@ -99,13 +99,12 @@ export default function makeGeometryProgram() {
     gl.frontFace(gl.CCW);
     gl.enable(gl.DEPTH_TEST);
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    // gl.clearColor(0.5, 0.5, 0.5, 1);
 
     // ROTATE MODEL MATRIX
     rotateY(modelMatrix, modelMatrix, 0.01);
     rotateX(modelMatrix, modelMatrix, 0.02);
     gl.uniformMatrix4fv(modelMatrixLocation, false, modelMatrix);
-    gl.uniform1i(hoveredVertexIdLocation, hoveredVertexId);
+    gl.uniform1i(hoveredFaceIdLocation, hoveredFaceId);
 
     gl.clearBufferfv(gl.COLOR, 0, new Float32Array([0, 0, 0, 0]));
     gl.clearBufferuiv(gl.COLOR, 1, new Uint32Array([0, 0, 0, 0]));

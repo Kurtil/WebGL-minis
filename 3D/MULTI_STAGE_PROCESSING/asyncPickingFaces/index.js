@@ -39,27 +39,27 @@ gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
 const queue = makeAsyncPickingQueue(gl);
 
-// TODO replace vertexId with faceId
-let hoveredVertexId = null;
+let hoveredFaceId = null;
 
 function draw() {
   gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
   gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]);
 
-  drawGeometry(hoveredVertexId);
-  queue.flush().then(vertexId => {
-    if (vertexId === undefined) {
+  drawGeometry(hoveredFaceId);
+
+  queue.flush().then(faceId => {
+    if (faceId === undefined) {
       return;
-    } else if (vertexId === 0) {
-      hoveredVertexId = null;
+    } else if (faceId === 0) {
+      hoveredFaceId = null;
     } else {
-      hoveredVertexId = vertexId;
+      hoveredFaceId = faceId;
     }
   });
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-  drawQuad(colorTexture, vertexIdTexture);
+  drawQuad(colorTexture);
 
   requestAnimationFrame(draw);
 }

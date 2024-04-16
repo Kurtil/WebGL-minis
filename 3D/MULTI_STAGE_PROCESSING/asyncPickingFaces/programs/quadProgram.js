@@ -50,7 +50,7 @@ export default function makeQuadProgram() {
   const colorTextureUnit = 4;
   gl.uniform1i(colorTextureLocation, colorTextureUnit);
 
-  return (colorTexture, vertexIdTexture) => {
+  return colorTexture => {
     gl.useProgram(program);
     gl.bindVertexArray(vao);
 
