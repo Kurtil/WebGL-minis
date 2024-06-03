@@ -18,17 +18,8 @@ uniform float time;
 
 #define RAY_MARCHING_STEPS 100
 
-float CLOSTEST = 0.001; // close enough to the scene
+float CLOSTEST = 0.001;
 float FARTEST = 100.; 
-
-/**
- * @param {vec3} p - point in space
- * @param {float} r - radius of the sphere
- * @returns {float} - distance from the point to the sphere
- */
-float sdSphere(vec3 p, float r) {
-  return length(p) - r;
-}
 
 /**
  * @param {vec3} p - point in space
@@ -40,69 +31,19 @@ float sdBox(vec3 p, vec3 b) {
   return length(max(d, 0.)) + min(max(d.x, max(d.y, d.z)), 0.);
 }
 
-// OPERATORS
-
-/**
- * Standard operators
- * @param {float} d1 - distance to the first object
- * @param {float} d2 - distance to the second object
- * @returns {float} - distance to the closest object
- */
-
-// Union
-float opU(float d1, float d2) {
-  return min(d1, d2);
+float sdOctahedron(vec3 p, float s) {
+  p = abs(p);
+  return (p.x + p.y + p.z - s) * .57735027;
 }
 
-// Subtraction  
-float opS(float d1, float d2) {
-  return max(-d1, d2);
-}
-
-// Intersection
-float opI(float d1, float d2) {
-  return max(d1, d2);
-}
-
-/**
- * Smooth operators
- * @param {float} d1 - distance to the first object
- * @param {float} d2 - distance to the second object
- * @param {float} k - blending factor
- * @returns {float} - distance to the closest object
- */
-
-// Union
-float opUs(float d1, float d2, float k) {
-  return min(d1, d2) - k * max(d1, d2);
-}
-
-// Subtraction
-float opSs(float d1, float d2, float k) {
-  return max(-d1, d2) + k * max(d1, d2);
-}
-
-// Intersection
-float opIs(float d1, float d2, float k) {
-  return max(d1, d2) + k * min(d1, d2);
-}
-
-// Minimum
-float smin(float d1, float d2, float k) {
-  float h = max(k - abs(d1 - d2), 0.) / k;
-  return min(d1, d2) - h * h * k * .25;
-}
-
-// Maximum
-float smax(float d1, float d2, float k) {
-  float h = max(k - abs(d1 - d2), 0.) / k;
-  return max(d1, d2) + h * h * k * .25;
+vec3 palette(float t) {
+  return .5+.5*cos(6.28318*(t+vec3(.3,.416,.557)));
 }
 
 /**
  * Rotation matrix
  * To use in 3D, omit the component of the axis you want to rotate around.
- * ex: vector.xy *= rot(angle);
+ * ex: vector.xy *= rot(angle); 
  * 
  * @param {float} a - angle
  * @returns {mat2} - rotation matrix
@@ -119,19 +60,15 @@ mat2 rot(float a) {
  * @returns {float} - distance to the scene
  */ 
 float map(vec3 p) {
-  vec3 sphereCenter = vec3(sin(time) * 3., 0, 0);
-  float sphere = sdSphere(p - sphereCenter, 1.);
-
-  vec3 pCopy = p;
-
-  pCopy.xy *= rot(time);
-
-  float boxScale = .5;
-  float box = sdBox(pCopy / boxScale, vec3(.75)) * boxScale; // multiply by boxScale to fix artifacts  
+  p.z += time * .4;
  
-  float ground = p.y + .7;
+  p = fract(p) - .5; // tiling
 
-  return smin(ground, smin(sphere, box, .7), .3);
+  p.xy *= rot(time);
+
+  float box = sdOctahedron(p, .03);
+
+  return box;
 }
  
 void main() {
@@ -155,7 +92,7 @@ void main() {
   }
 
   // Colouring
-  col = vec3(t * .2); // white color
+  col = palette(t * .05); // white color
 
   color = vec4(col, 1);
 }

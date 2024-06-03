@@ -15,21 +15,63 @@ out vec4 color;
 
 uniform vec2 resolution;
 uniform float time;
-uniform vec2 mouse;
 
 #define RAY_MARCHING_STEPS 100
 
-float CLOSTEST = 0.001; // close enough to the scene
+float CLOSTEST = 0.001;
 float FARTEST = 100.; 
 
-// distance to the scene
+/**
+ * @param {vec3} p - point in space
+ * @param {vec3} b - box dimensions
+ * @returns {float} - distance from the point to the box
+ */
+float sdBox(vec3 p, vec3 b) {
+  vec3 d = abs(p) - b;
+  return length(max(d, 0.)) + min(max(d.x, max(d.y, d.z)), 0.);
+}
+
+float sdOctahedron(vec3 p, float s) {
+  p = abs(p);
+  return (p.x + p.y + p.z - s) * .57735027;
+}
+
+vec3 palette(float t) {
+  return .5+.5*cos(6.28318*(t+vec3(.3,.416,.557)));
+}
+
+/**
+ * Rotation matrix
+ * To use in 3D, omit the component of the axis you want to rotate around.
+ * ex: vector.xy *= rot(angle); 
+ * 
+ * @param {float} a - angle
+ * @returns {mat2} - rotation matrix
+ */
+mat2 rot(float a) {
+  float s = sin(a);
+  float c = cos(a);
+  return mat2(c, -s, s, c);
+}
+
+/**
+ * distance to the scene
+ * @param {vec3} p - point in space
+ * @returns {float} - distance to the scene
+ */ 
 float map(vec3 p) {
-  return length(p) - 1.; // sphere with radius 1, located at origin
+  p.z += time * .7;
+ 
+  p.xy = fract(p.xy) - .5; // tiling
+  p.z = mod(p.z, .25) - .125;
+
+  float box = sdOctahedron(p, .15);
+
+  return box;
 }
  
 void main() {
   vec2 uv = (gl_FragCoord.xy * 2. - resolution) / resolution.y;
-  vec2 m = (mouse * 2. - resolution) / resolution.y;
 
   vec3 ro = vec3(0, 0, -3);         // ray origin
   vec3 rd = normalize(vec3(uv, 1)); // ray direction
@@ -38,20 +80,23 @@ void main() {
   float t = 0.; // distance traveled by ray 
 
   // ray marching
-  for (int i = 0; i < RAY_MARCHING_STEPS ; i++) {
+  int i;
+  for (i = 0; i < RAY_MARCHING_STEPS ; i++) {
     vec3 p = ro + rd * t;
+
+    p.xy *= rot(t * .1);
+
+    p.y += sin(t) * .3;
 
     float d = map(p); // distance to the scene
 
     t += d; // move along the ray 
 
-    // col = vec3(i) / 80.; // color based on the number of steps, TESTING 
-
     if (d < CLOSTEST || d > FARTEST) break; // early exit
   }
 
   // Colouring
-  col = vec3(t * .2); // white color
+  col = palette(t * .05 + float(i) * .005);
 
   color = vec4(col, 1);
 }
@@ -83,18 +128,6 @@ const start = performance.now();
 let time = 0
 const timeLocation = gl.getUniformLocation(program, "time");
 
-const mouseLocation = gl.getUniformLocation(program, "mouse");
-const mousePosition = { x: width / 2, y: height / 2 };
-
-gl.canvas.addEventListener("mousemove", (e) => {
-  const { clientX, clientY } = e;
-  const { left, top } = gl.canvas.getBoundingClientRect();
-  const x = clientX - left;
-  const y = clientY - top;
-  mousePosition.x = x;
-  mousePosition.y = y;
-});
-
 gl.useProgram(program);
 
 function draw() {
@@ -106,9 +139,8 @@ function draw() {
   gl.uniform2fv(resolutionLocation, resolution);
 
   time = (performance.now() - start) / 1000;
-  gl.uniform1f(timeLocation, time);
 
-  gl.uniform2f(mouseLocation, mousePosition.x, mousePosition.y);
+  gl.uniform1f(timeLocation, time);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
