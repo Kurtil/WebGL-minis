@@ -1,6 +1,8 @@
 // Equivalent to xeokit data textures
 // Follow along from https://webgl2fundamentals.org/webgl/lessons/webgl-pulling-vertices.html
 
+// TODO finish this example
+
 import { makeCube } from "../../utils/geometryBuilder.js";
 import { gl, makeBuffer, makeProgram } from "../../utils/webglutils.js";
 import { create as createMat4, perspectiveZO, lookAt, rotateY, rotateX } from "../../utils/math/mat4.js";
