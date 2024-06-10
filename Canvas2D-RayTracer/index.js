@@ -1,7 +1,9 @@
-import { sphereIntersection, normalize, reflect, add, mulParts } from './utils.js';
+import { sphereIntersection, normalize, reflect, add, mulParts, mul } from './utils.js';
 
 const FOCAL_LENGTH = 130;
-const RAY_BOUNCES = 5;
+const RAY_BOUNCES = 3;
+const SAMPLES = 1;
+const JITTERING = 0.02;
 const RAY_ORIGIN = [0, 0, 0];
 
 const canvas = document.querySelector('canvas');
@@ -27,13 +29,15 @@ const objects = [
         radius: 5,
         position: [4, -8, 10],
         emissive: [255, 0, 0],
-        reflectivity: [1, 1, 1]
+        reflectivity: [1, 1, 1],
+        rougthness: .4
     },
     {
         shape: 'sphere',
         radius: 10,
         position: [15, 15, 20],
         emissive: [0, 255, 0],
+        rougthness: .2
     },
     {
         shape: 'sphere',
@@ -60,7 +64,16 @@ function paint(pixels) {
             const y = (pixels[i].length - j) - height / 2;
 
             const direction = normalize([x, y, FOCAL_LENGTH]);
-            const color = trace(RAY_ORIGIN, direction, objects);
+
+            let color = [0, 0, 0];
+            for (let s = 0; s < SAMPLES; s++) {
+                const jitter = [Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5];
+                const jitteredDirection = normalize(add(direction, mul(jitter, JITTERING)));
+                const sColor = trace(RAY_ORIGIN, jitteredDirection, objects);
+
+                color = add(color, sColor);
+            }
+            color = mul(color, 1 / SAMPLES);
 
             ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
             ctx.fillRect(i , j, 1, 1);
@@ -79,12 +92,18 @@ function trace(origin, direction, objects, bouncesLeft = RAY_BOUNCES) {
                 if (!closestIntersection || intersection.distance < closestIntersection.distance) {
                     const reflectivity = object.reflectivity ?? [1, 1, 1];
 
+                    let normal = intersection.normal;
+                    if (object.rougthness > 0) {
+                        const randomNormal = normalize([Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5]);
+                        normal = normalize(add(normal, mul(randomNormal, object.rougthness)));
+                    }
+
                     closestIntersection = {
                         object: object,
                         color: mulParts(object.emissive, reflectivity),
                         distance: intersection.distance,
                         origin: intersection.intersection,
-                        normal: intersection.normal,
+                        normal,
                         reflectivity
                     };
                 }
