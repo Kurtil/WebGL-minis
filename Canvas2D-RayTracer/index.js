@@ -3,7 +3,7 @@ import { sphereIntersection, normalize, reflect, add, mulParts, mul } from './ut
 const FOCAL_LENGTH = 130;
 const RAY_BOUNCES = 3;
 const SAMPLES = 1;
-const JITTERING = 0.02;
+const JITTERING = 0;
 const RAY_ORIGIN = [0, 0, 0];
 
 const canvas = document.querySelector('canvas');
@@ -26,8 +26,15 @@ const pixels = Array(width).fill().map(() => Array(height).fill().map(() => [0, 
 const objects = [
     {
         shape: 'sphere',
-        radius: 5,
-        position: [4, -8, 10],
+        radius: 20,
+        position: [-20, 0, 20],
+        emissive: [0, 0, 255],
+        reflectivity: [1, 1, 1]
+    },
+    {
+        shape: 'sphere',
+        radius: 20,
+        position: [20, 0, 20],
         emissive: [255, 0, 0],
         reflectivity: [1, 1, 1],
         rougthness: .4
@@ -38,13 +45,6 @@ const objects = [
         position: [15, 15, 20],
         emissive: [0, 255, 0],
         rougthness: .2
-    },
-    {
-        shape: 'sphere',
-        radius: 12,
-        position: [-12, 0, 20],
-        emissive: [0, 0, 255],
-        reflectivity: [1, 1, 1]
     },
     {
         shape: 'sphere',
@@ -90,7 +90,7 @@ function trace(origin, direction, objects, bouncesLeft = RAY_BOUNCES) {
 
             if (intersection.isIntersecting) {
                 if (!closestIntersection || intersection.distance < closestIntersection.distance) {
-                    const reflectivity = object.reflectivity ?? [1, 1, 1];
+                    const reflectivity = object.reflectivity ?? [0, 0, 0];
 
                     let normal = intersection.normal;
                     if (object.rougthness > 0) {
@@ -100,7 +100,7 @@ function trace(origin, direction, objects, bouncesLeft = RAY_BOUNCES) {
 
                     closestIntersection = {
                         object: object,
-                        color: mulParts(object.emissive, reflectivity),
+                        color: object.emissive,
                         distance: intersection.distance,
                         origin: intersection.intersection,
                         normal,
