@@ -10,6 +10,10 @@ export function mul([x, y, z], scalar) {
     return [x * scalar, y * scalar, z * scalar];
 }
 
+export function divide([x1, y1, z1], [x2, y2, z2]) {
+    return [x1 / x2, y1 / y2, z1 / z2];
+}
+
 export function mulParts([x1, y1, z1], [x2, y2, z2]) {
     return [x1 * x2, y1 * y2, z1 * z2];
 }
@@ -98,4 +102,27 @@ export function sphereIntersection(rayOrigin, rayDirection, sphere) {
         intersection,
         normal
     };
+}
+
+// compute the near and far intersections of the cube (stored in the x and y components) using the slab method
+// no intersection means vec.x > vec.y (really tNear > tFar)
+export function cubeIntersection(rayOrigin, rayDirection, cubeMin, cubeMax) {
+    const tMin = divide(sub(cubeMin, rayOrigin), rayDirection);
+    const tMax = divide(sub(cubeMax, rayOrigin), rayDirection);
+    const t1 = [Math.min(tMin[0], tMax[0]), Math.min(tMin[1], tMax[1]), Math.min(tMin[2], tMax[2])];
+    const t2 = [Math.max(tMin[0], tMax[0]), Math.max(tMin[1], tMax[1]), Math.max(tMin[2], tMax[2])];
+    const tNear = Math.max(t1[0], t1[1], t1[2]);
+    const tFar = Math.min(t2[0], t2[1], t2[2]);
+    return { tNear, tFar, isIntersecting: tNear <= tFar};
+}
+
+export function cubeNormal([x, y, z], cubeMin, cubeMax) {
+    const epsilon = 0.0001;
+    if (Math.abs(x - cubeMin[0]) < epsilon) return [-1, 0, 0];
+    if (Math.abs(x - cubeMax[0]) < epsilon) return [1, 0, 0];
+    if (Math.abs(y - cubeMin[1]) < epsilon) return [0, -1, 0];
+    if (Math.abs(y - cubeMax[1]) < epsilon) return [0, 1, 0];
+    if (Math.abs(z - cubeMin[2]) < epsilon) return [0, 0, -1];
+    if (Math.abs(z - cubeMax[2]) < epsilon) return [0, 0, 1];
+    return [0, 0, 0];
 }
