@@ -35,11 +35,6 @@ gl.activeTexture(activeTexture);
 gl.bindTexture(gl.TEXTURE_2D, texture);
 gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, width, height);
 
-const frameBuffer = gl.createFramebuffer();
-gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
-gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
-gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
 gl.useProgram(program);
 
 function draw() {
@@ -51,10 +46,7 @@ function draw() {
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-  gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
-  gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null);
-  gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, gl.COLOR_BUFFER_BIT, gl.NEAREST);
-  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
 
   requestAnimationFrame(draw);
 }
