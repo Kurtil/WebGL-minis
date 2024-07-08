@@ -7,6 +7,8 @@ out vec4 fragColor;
 
 const float FOV = 90.0;
 
+const int SAMPLES_PER_FRAME = 10;
+
 void main()
 {
     // Normalized pixel coordinates (from -1 to 1)
@@ -18,10 +20,16 @@ void main()
     vec3 rayTarget = vec3(uv, cameraDistance);
     vec3 rayDir = normalize(rayTarget - rayPosition);
 
-    // initialize a random number state based on frag coord and frame
-    uint rngState = uint(uint(gl_FragCoord.x) * uint(1973) + uint(gl_FragCoord.y) * uint(9277) + uint(frame) * uint(26699)) | uint(1);
+    vec3 color = vec3(0);
 
-    vec3 color = getRayColor(rayPosition, rayDir, rngState);
+    for (int i = 0; i < SAMPLES_PER_FRAME; i++) {
+    // initialize a random number state based on frag coord and frame
+        uint rngState = uint(i + 1) * uint(uint(gl_FragCoord.x) * uint(1973) + uint(gl_FragCoord.y) * uint(9277) + uint(frame) * uint(26699)) | uint(1);
+
+        color += getRayColor(rayPosition, rayDir, rngState);
+    }
+
+    color /= float(SAMPLES_PER_FRAME);
 
     vec2 texCoord = gl_FragCoord.xy / resolution;
     vec3 textureColor = texture(tex, texCoord).rgb;
