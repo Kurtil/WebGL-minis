@@ -8,7 +8,7 @@ const global = `
 precision highp float;
 
 const float INFINITY = 10000.0;
-const float MINIMUM_HIT_DISTANCE = 0.1;
+const float MINIMUM_HIT_DISTANCE = 0.001;
 const float PI = 3.14159265359;
 const float TWO_PI = 6.28318530718;
 
