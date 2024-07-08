@@ -1,5 +1,6 @@
 export default `
 const int MAX_BOUNCES = 8;
+uniform samplerCube skybox;
 
 vec3 getRayColor(vec3 startRayOrigin, vec3 startRayDirection, inout uint state) {
 
@@ -16,6 +17,8 @@ vec3 getRayColor(vec3 startRayOrigin, vec3 startRayDirection, inout uint state) 
     TestSceneTrace(rayOrigin, rayDirection, hitInfo);
 
     if (hitInfo.dist == INFINITY) {
+      // skybox contribution
+      pixelColor += texture(skybox, rayDirection).rgb * colorMask;
       break;
     }
 
