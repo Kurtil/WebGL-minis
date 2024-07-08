@@ -22,29 +22,41 @@ gl.enableVertexAttribArray(positionLocation);
 gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
 const resolutionLocation = gl.getUniformLocation(program, "resolution");
-const timeLocation = gl.getUniformLocation(program, "time");
 const frameLocation = gl.getUniformLocation(program, "frame");
+const texLocation = gl.getUniformLocation(program, "tex");
 
 const { width, height } = gl.canvas;
 const resolution = [width, height];
-const startTime = Date.now();
 let frame = 0;
+
+const texture = gl.createTexture();
+const activeTexture = gl.TEXTURE0 + 4;
+gl.activeTexture(activeTexture);
+gl.bindTexture(gl.TEXTURE_2D, texture);
+gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, width, height);
+
+const frameBuffer = gl.createFramebuffer();
+gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
 gl.useProgram(program);
 
 function draw() {
-  gl.clearColor(0.5, 0.5, 0.5, 1);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.viewport(0, 0, width, height);
 
   gl.uniform2fv(resolutionLocation, resolution);
-  gl.uniform1f(timeLocation, (Date.now() - startTime) / 1000);
   gl.uniform1f(frameLocation, frame++);
+  gl.uniform1i(texLocation, activeTexture - gl.TEXTURE0);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-  // requestAnimationFrame(draw);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+  gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null);
+  gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+  requestAnimationFrame(draw);
 }
 
 draw();

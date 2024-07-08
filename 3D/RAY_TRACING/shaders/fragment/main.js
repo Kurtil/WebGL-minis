@@ -1,6 +1,7 @@
 export default `
 uniform vec2 resolution;
 uniform float frame;
+uniform sampler2D tex;
 
 out vec4 fragColor;
 
@@ -22,7 +23,10 @@ void main()
 
     vec3 color = getRayColor(rayPosition, rayDir, rngState);
 
+    vec2 texCoord = gl_FragCoord.xy / resolution;
+    vec3 textureColor = texture(tex, texCoord).rgb;
+
     // Output to screen
-    fragColor = vec4(color, 1.0);
+    fragColor = vec4(mix(textureColor, color, 1. / (1. + frame)), 1.0);
 }`
 ;

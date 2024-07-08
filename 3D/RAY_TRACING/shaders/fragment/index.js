@@ -23,6 +23,4 @@ struct HitInfo
 
 const vertexShader = global + randrom + geometry + scene + getRayColor + main;
 
-console.log(vertexShader);
-
 export default vertexShader;
