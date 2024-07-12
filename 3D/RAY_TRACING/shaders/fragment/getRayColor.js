@@ -2,6 +2,8 @@ export default `
 const int MAX_BOUNCES = 8;
 uniform samplerCube skybox;
 
+const float c_skyboxBrightnessMultiplier = 8.0;
+
 vec3 getRayColor(vec3 startRayOrigin, vec3 startRayDirection, inout uint state) {
 
   vec3 pixelColor = vec3(0);
@@ -18,7 +20,7 @@ vec3 getRayColor(vec3 startRayOrigin, vec3 startRayDirection, inout uint state) 
 
     if (hitInfo.dist == INFINITY) {
       // skybox contribution
-      pixelColor += texture(skybox, rayDirection).rgb * colorMask;
+      pixelColor += SRGBToLinear(texture(skybox, rayDirection).rgb) * colorMask * c_skyboxBrightnessMultiplier;
       break;
     }
 

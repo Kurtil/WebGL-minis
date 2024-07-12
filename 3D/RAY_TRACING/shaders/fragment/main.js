@@ -8,6 +8,7 @@ out vec4 fragColor;
 const float FOV = 90.0;
 
 const int SAMPLES_PER_FRAME = 10;
+const float exposure = .2;
 
 void main()
 {
@@ -30,9 +31,11 @@ void main()
         color += getRayColor(rayPosition, rayDir, rngState) / float(SAMPLES_PER_FRAME);
     }
 
+    color = ACESFilm(LinearToSRGB(color * exposure));
+
     vec2 texCoord = gl_FragCoord.xy / resolution;
     vec3 textureColor = texture(tex, texCoord).rgb;
 
     // Output to screen
-    fragColor = vec4(mix(textureColor, color, 1. / (1. + frame)), 1.0);
+    fragColor = vec4(mix(color, textureColor, frame / (1. + frame)), 1.0);
 }`;
