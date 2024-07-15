@@ -25,13 +25,23 @@ vec3 getRayColor(vec3 startRayOrigin, vec3 startRayDirection, inout uint state) 
     }
 
     rayOrigin += rayDirection * hitInfo.dist + hitInfo.normal * MINIMUM_HIT_DISTANCE;
-    // calculate new ray direction, in a cosine weighted hemisphere oriented at normal
-    rayDirection = normalize(RandomUnitVector(state) + hitInfo.normal);
+
+    float doSpecular = step(0.0, hitInfo.material.specularPercentage - RandomFloat01(state));
+
+    // Calculate a new ray direction.
+    // Diffuse uses a normal oriented cosine weighted hemisphere sample.
+    // Perfectly smooth specular uses the reflection ray.
+    // Rough (glossy) specular lerps from the smooth specular to the rough diffuse by the material roughness squared
+    // OPTION: Squaring the roughness is just a convention to make roughness feel more linear perceptually.
+    vec3 diffuseRayDir = normalize(hitInfo.normal + RandomUnitVector(state));
+    vec3 specularRayDir = reflect(rayDirection, hitInfo.normal);
+    specularRayDir = normalize(mix(specularRayDir, diffuseRayDir, hitInfo.material.roughness));
+    rayDirection = mix(diffuseRayDir, specularRayDir, doSpecular);
 
     // light contribution
-    pixelColor += hitInfo.emissive * colorMask;
+    pixelColor += hitInfo.material.emissive * colorMask;
 
-    colorMask *= hitInfo.albedo;
+    colorMask *= mix(hitInfo.material.albedo, hitInfo.material.specularColor, doSpecular);
   }
 
   return pixelColor;

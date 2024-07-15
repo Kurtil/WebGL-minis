@@ -13,10 +13,13 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         vec3 D = vec3(-12.6f,  12.6f, 25.0f) + sceneTranslation;
         if (TestQuadTrace(rayPos, rayDir, hitInfo, A, B, C, D))
         {
-            hitInfo.albedo = vec3(0.7f, 0.7f, 0.7f);
-            hitInfo.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.albedo = vec3(0.7f, 0.7f, 0.7f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.specularPercentage = 0.0f;
+            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);
         }
-	}    
+	}
     
     // floor
     {
@@ -26,8 +29,11 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         vec3 D = vec3(-12.6f, -12.45f, 15.0f) + sceneTranslation;
         if (TestQuadTrace(rayPos, rayDir, hitInfo, A, B, C, D))
         {
-            hitInfo.albedo = vec3(0.7f, 0.7f, 0.7f);
-            hitInfo.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.albedo = vec3(0.7f, 0.7f, 0.7f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.specularPercentage = 0.0f;
+            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);            
         }        
     }
     
@@ -39,8 +45,11 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         vec3 D = vec3(-12.6f, 12.5f, 15.0f) + sceneTranslation;
         if (TestQuadTrace(rayPos, rayDir, hitInfo, A, B, C, D))
         {
-            hitInfo.albedo = vec3(0.7f, 0.7f, 0.7f);
-            hitInfo.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.albedo = vec3(0.7f, 0.7f, 0.7f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.specularPercentage = 0.0f;
+            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);
         }        
     }    
     
@@ -52,8 +61,11 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         vec3 D = vec3(-12.5f,  12.6f, 25.0f) + sceneTranslation;
         if (TestQuadTrace(rayPos, rayDir, hitInfo, A, B, C, D))
         {
-            hitInfo.albedo = vec3(0.7f, 0.1f, 0.1f);
-            hitInfo.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.albedo = vec3(0.7f, 0.1f, 0.1f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.specularPercentage = 0.0f;
+            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);
         }        
     }
     
@@ -65,8 +77,11 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         vec3 D = vec3( 12.5f,  12.6f, 25.0f) + sceneTranslation;
         if (TestQuadTrace(rayPos, rayDir, hitInfo, A, B, C, D))
         {
-            hitInfo.albedo = vec3(0.1f, 0.7f, 0.1f);
-            hitInfo.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.albedo = vec3(0.1f, 0.7f, 0.1f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.specularPercentage = 0.0f;
+            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);            
         }        
     }    
     
@@ -78,27 +93,89 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         vec3 D = vec3(-5.0f, 12.4f,  17.5f) + sceneTranslation;
         if (TestQuadTrace(rayPos, rayDir, hitInfo, A, B, C, D))
         {
-            hitInfo.albedo = vec3(0.0f, 0.0f, 0.0f);
-            hitInfo.emissive = vec3(1.0f, 0.9f, 0.7f) * 20.0f;
+            hitInfo.material.albedo = vec3(0.0f, 0.0f, 0.0f);
+            hitInfo.material.emissive = vec3(1.0f, 0.9f, 0.7f) * 20.0f;
+            hitInfo.material.specularPercentage = 0.0f;
+            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);            
         }        
     }
     
 	if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(-9.0f, -9.5f, 20.0f, 3.0f)+sceneTranslation4))
     {
-        hitInfo.albedo = vec3(0.9f, 0.9f, 0.75f);
-        hitInfo.emissive = vec3(0.0f, 0.0f, 0.0f);        
+        hitInfo.material.albedo = vec3(0.9f, 0.9f, 0.5f);
+        hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
+        hitInfo.material.specularPercentage = 0.1f;
+        hitInfo.material.roughness = 0.2f;
+        hitInfo.material.specularColor = vec3(0.9f, 0.9f, 0.9f);        
     } 
     
 	if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(0.0f, -9.5f, 20.0f, 3.0f)+sceneTranslation4))
     {
-        hitInfo.albedo = vec3(0.9f, 0.75f, 0.9f);
-        hitInfo.emissive = vec3(0.0f, 0.0f, 0.0f);        
+        hitInfo.material.albedo = vec3(0.9f, 0.5f, 0.9f);
+        hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);   
+        hitInfo.material.specularPercentage = 0.3f;
+        hitInfo.material.roughness = 0.2;
+        hitInfo.material.specularColor = vec3(0.9f, 0.9f, 0.9f);        
     }    
     
+    // a ball which has blue diffuse but red specular. an example of a "bad material".
+    // a better lighting model wouldn't let you do this sort of thing
 	if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(9.0f, -9.5f, 20.0f, 3.0f)+sceneTranslation4))
     {
-        hitInfo.albedo = vec3(0.75f, 0.9f, 0.9f);
-        hitInfo.emissive = vec3(0.0f, 0.0f, 0.0f);
-    }    
+        hitInfo.material.albedo = vec3(0.0f, 0.0f, 1.0f);
+        hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
+        hitInfo.material.specularPercentage = 0.5f;
+        hitInfo.material.roughness = 0.4f;
+        hitInfo.material.specularColor = vec3(1.0f, 0.0f, 0.0f);        
+    }
+    
+    // shiny green balls of varying roughnesses
+    {
+        if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(-10.0f, 0.0f, 23.0f, 1.75f)+sceneTranslation4))
+        {
+            hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
+            hitInfo.material.specularPercentage = 1.0f;
+            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);       
+        }     
+        
+        if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(-5.0f, 0.0f, 23.0f, 1.75f)+sceneTranslation4))
+        {
+            hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
+            hitInfo.material.specularPercentage = 1.0f;
+            hitInfo.material.roughness = 0.25f;
+            hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);
+        }            
+        
+        if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(0.0f, 0.0f, 23.0f, 1.75f)+sceneTranslation4))
+        {
+            hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
+            hitInfo.material.specularPercentage = 1.0f;
+            hitInfo.material.roughness = 0.5f;
+            hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);
+        }            
+        
+        if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(5.0f, 0.0f, 23.0f, 1.75f)+sceneTranslation4))
+        {
+            hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
+            hitInfo.material.specularPercentage = 1.0f;
+            hitInfo.material.roughness = 0.75f;
+            hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);
+        }        
+        
+        if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(10.0f, 0.0f, 23.0f, 1.75f)+sceneTranslation4))
+        {
+            hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
+            hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
+            hitInfo.material.specularPercentage = 1.0f;
+            hitInfo.material.roughness = 1.0f;
+            hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);
+        }           
+    }
 }
 `;

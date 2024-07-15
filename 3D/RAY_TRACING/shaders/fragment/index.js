@@ -13,12 +13,19 @@ const float MINIMUM_HIT_DISTANCE = 0.001;
 const float PI = 3.14159265359;
 const float TWO_PI = 6.28318530718;
 
+struct Material {
+    vec3 albedo;
+    vec3 emissive;
+    float roughness;
+    float specularPercentage;
+    vec3 specularColor; 
+};
+
 struct HitInfo
 {
     float dist;
     vec3 normal;
-    vec3 albedo;
-    vec3 emissive;
+    Material material;
 };
 `;
 
