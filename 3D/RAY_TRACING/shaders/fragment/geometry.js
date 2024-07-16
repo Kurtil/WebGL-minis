@@ -75,7 +75,9 @@ bool TestQuadTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo info, in vec3 a
 	if (dist > MINIMUM_HIT_DISTANCE && dist < info.dist)
     {
         info.dist = dist;        
-        info.normal = normal;        
+        info.normal = normal;   
+        info.fromInside = false;
+
         return true;
     }    
     
@@ -116,6 +118,8 @@ bool TestSphereTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo info, in vec4
     {
         info.dist = dist;        
         info.normal = normalize((rayPos+rayDir*dist) - sphere.xyz) * (fromInside ? -1.0f : 1.0f);
+        info.fromInside = fromInside;
+
         return true;
     }
     

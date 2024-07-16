@@ -15,8 +15,8 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(0.7f, 0.7f, 0.7f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
-            hitInfo.material.specularPercentage = 0.0f;
-            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularChance = 0.0f;
+            hitInfo.material.specularRoughness= 0.0f;
             hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);
         }
 	}
@@ -31,8 +31,8 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(0.7f, 0.7f, 0.7f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
-            hitInfo.material.specularPercentage = 0.0f;
-            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularChance = 0.0f;
+            hitInfo.material.specularRoughness= 0.0f;
             hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);            
         }        
     }
@@ -47,8 +47,8 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(0.7f, 0.7f, 0.7f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
-            hitInfo.material.specularPercentage = 0.0f;
-            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularChance = 0.0f;
+            hitInfo.material.specularRoughness= 0.0f;
             hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);
         }        
     }    
@@ -63,8 +63,8 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(0.7f, 0.1f, 0.1f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
-            hitInfo.material.specularPercentage = 0.0f;
-            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularChance = 0.0f;
+            hitInfo.material.specularRoughness= 0.0f;
             hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);
         }        
     }
@@ -79,8 +79,8 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(0.1f, 0.7f, 0.1f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
-            hitInfo.material.specularPercentage = 0.0f;
-            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularChance = 0.0f;
+            hitInfo.material.specularRoughness= 0.0f;
             hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);            
         }        
     }    
@@ -95,8 +95,8 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(0.0f, 0.0f, 0.0f);
             hitInfo.material.emissive = vec3(1.0f, 0.9f, 0.7f) * 20.0f;
-            hitInfo.material.specularPercentage = 0.0f;
-            hitInfo.material.roughness = 0.0f;
+            hitInfo.material.specularChance = 0.0f;
+            hitInfo.material.specularRoughness= 0.0f;
             hitInfo.material.specularColor = vec3(0.0f, 0.0f, 0.0f);            
         }        
     }
@@ -105,19 +105,44 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
     {
         hitInfo.material.albedo = vec3(0.9f, 0.9f, 0.5f);
         hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
-        hitInfo.material.specularPercentage = 0.1f;
-        hitInfo.material.roughness = 0.2f;
+        hitInfo.material.specularChance = 0.1f;
+        hitInfo.material.specularRoughness= 0.2f;
         hitInfo.material.specularColor = vec3(0.9f, 0.9f, 0.9f);        
     } 
     
-	if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(0.0f, -9.5f, 20.0f, 3.0f)+sceneTranslation4))
+	if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(-5.0f, -9.5f, 15.0f, 3.0f)+sceneTranslation4))
     {
         hitInfo.material.albedo = vec3(0.9f, 0.5f, 0.9f);
         hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);   
-        hitInfo.material.specularPercentage = 0.3f;
-        hitInfo.material.roughness = 0.2;
+        hitInfo.material.specularChance = 0.1f;
+        hitInfo.material.specularRoughness= 0.2;
+        hitInfo.material.specularColor = vec3(0.9f, 0.9f, 0.9f);      
+        hitInfo.material.refractionChance = 1.f;
+        hitInfo.material.refractionRoughness = .0f;
+        hitInfo.material.IOR = 1.2f;
+    }
+
+	if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(5.0f, -9.5f, 15.0f, 3.0f)+sceneTranslation4))
+    {
+        hitInfo.material.albedo = vec3(0.9f, 0.5f, 0.9f);
+        hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);   
+        hitInfo.material.specularChance = 0.1f;
+        hitInfo.material.specularRoughness= 0.2;
+        hitInfo.material.specularColor = vec3(0.9f, 0.9f, 0.9f);      
+        hitInfo.material.refractionChance = .9f;
+        hitInfo.material.refractionRoughness = .0f;
+        hitInfo.material.refractionColor = vec3(1, 1, 0);
+        hitInfo.material.IOR = 1.3f;
+    }
+
+    if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(0.0f, -9.5f, 20.0f, 3.0f)+sceneTranslation4))
+    {
+        hitInfo.material.albedo = vec3(0.9f, 0.5f, 0.9f);
+        hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);   
+        hitInfo.material.specularChance = 0.3f;
+        hitInfo.material.specularRoughness = 0.2;
         hitInfo.material.specularColor = vec3(0.9f, 0.9f, 0.9f);        
-    }    
+    } 
     
     // a ball which has blue diffuse but red specular. an example of a "bad material".
     // a better lighting model wouldn't let you do this sort of thing
@@ -125,9 +150,10 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
     {
         hitInfo.material.albedo = vec3(0.0f, 0.0f, 1.0f);
         hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);
-        hitInfo.material.specularPercentage = 0.5f;
-        hitInfo.material.roughness = 0.4f;
-        hitInfo.material.specularColor = vec3(1.0f, 0.0f, 0.0f);        
+        hitInfo.material.specularChance = 0.5f;
+        hitInfo.material.specularRoughness= 0.4f;
+        hitInfo.material.specularColor = vec3(1.0f, 0.0f, 0.0f);      
+        hitInfo.material.refractionChance = 1.f;  
     }
     
     // shiny green balls of varying roughnesses
@@ -136,17 +162,19 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
-            hitInfo.material.specularPercentage = 1.0f;
-            hitInfo.material.roughness = 0.0f;
-            hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);       
+            hitInfo.material.specularChance = .0f;
+            hitInfo.material.specularRoughness= 0.0f;
+            hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);   
+            hitInfo.material.refractionChance = .9f;
+            hitInfo.material.refractionRoughness = .5f;  
         }     
         
         if (TestSphereTrace(rayPos, rayDir, hitInfo, vec4(-5.0f, 0.0f, 23.0f, 1.75f)+sceneTranslation4))
         {
             hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
-            hitInfo.material.specularPercentage = 1.0f;
-            hitInfo.material.roughness = 0.25f;
+            hitInfo.material.specularChance = 1.0f;
+            hitInfo.material.specularRoughness= 0.25f;
             hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);
         }            
         
@@ -154,8 +182,8 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
-            hitInfo.material.specularPercentage = 1.0f;
-            hitInfo.material.roughness = 0.5f;
+            hitInfo.material.specularChance = 1.0f;
+            hitInfo.material.specularRoughness= 0.5f;
             hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);
         }            
         
@@ -163,8 +191,8 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
-            hitInfo.material.specularPercentage = 1.0f;
-            hitInfo.material.roughness = 0.75f;
+            hitInfo.material.specularChance = 1.0f;
+            hitInfo.material.specularRoughness= 0.75f;
             hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);
         }        
         
@@ -172,8 +200,8 @@ void TestSceneTrace(in vec3 rayPos, in vec3 rayDir, inout HitInfo hitInfo)
         {
             hitInfo.material.albedo = vec3(1.0f, 1.0f, 1.0f);
             hitInfo.material.emissive = vec3(0.0f, 0.0f, 0.0f);        
-            hitInfo.material.specularPercentage = 1.0f;
-            hitInfo.material.roughness = 1.0f;
+            hitInfo.material.specularChance = 1.0f;
+            hitInfo.material.specularRoughness= 1.0f;
             hitInfo.material.specularColor = vec3(0.3f, 1.0f, 0.3f);
         }           
     }
