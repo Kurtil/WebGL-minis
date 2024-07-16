@@ -40,12 +40,6 @@ vec3 getRayColor(vec3 startRayOrigin, vec3 startRayDirection, inout uint state) 
     // calculate whether we are going to do a diffuse or specular reflection ray 
     float doSpecular = step(RandomFloat01(state), specularChance);
 
-    // get the probability for choosing the ray type we chose
-    float rayProbability = (doSpecular == 1.0f) ? specularChance : 1.0f - specularChance;
-            
-    // avoid numerical issues causing a divide by zero, or nearly so (more important later, when we add refraction)
-    rayProbability = max(rayProbability, 0.001f);
-
     // Calculate a new ray direction.
     // Diffuse uses a normal oriented cosine weighted hemisphere sample.
     // Perfectly smooth specular uses the reflection ray.
@@ -71,6 +65,12 @@ vec3 getRayColor(vec3 startRayOrigin, vec3 startRayDirection, inout uint state) 
     
         // Add the energy we 'lose' by randomly terminating paths
         colorMask *= 1.0f / p;
+
+        // get the probability for choosing the ray type we chose
+        float rayProbability = (doSpecular == 1.0f) ? specularChance : 1.0f - specularChance;
+                
+        // avoid numerical issues causing a divide by zero, or nearly so (more important later, when we add refraction)
+        rayProbability = max(rayProbability, 0.001f);
 
         // since we chose randomly between diffuse and specular,
         // we need to account for the times we didn't do one or the other.
