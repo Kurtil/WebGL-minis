@@ -4,6 +4,7 @@ import getRayColor from './getRayColor.js';
 import randrom from './random.js';
 import scene from './scene.js';
 import sRGB from './sRGB.js';
+import fresnel from "./fresnel.js";
 
 const global = `
 precision highp float;
@@ -19,6 +20,7 @@ struct Material {
     float roughness;
     float specularPercentage;
     vec3 specularColor; 
+    float IOR;
 };
 
 struct HitInfo
@@ -29,6 +31,6 @@ struct HitInfo
 };
 `;
 
-const vertexShader = global + sRGB + randrom + geometry + scene + getRayColor + main;
+const vertexShader = global + sRGB + randrom + fresnel + geometry + scene + getRayColor + main;
 
 export default vertexShader;
