@@ -1,4 +1,4 @@
-import { gl as GL, makeProgram, makeBuffer } from "webglutils";
+import { gl as GL, makeProgram } from "webglutils";
 /**
  * @type { WebGL2RenderingContext }
  */
