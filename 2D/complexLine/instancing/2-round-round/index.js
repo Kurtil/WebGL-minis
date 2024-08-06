@@ -100,8 +100,8 @@ gl.drawArraysInstanced(
 
 // ROUND JOIN
 
-import joinVertexShaderSource from "./shaders/join/vertex.js";
-import joinFragmentShaderSource from "./shaders/join/fragment.js";
+import joinVertexShaderSource from "./shaders/round/vertex.js";
+import joinFragmentShaderSource from "./shaders/round/fragment.js";
 
 const joinProgram = makeProgram(
   joinVertexShaderSource,
@@ -139,7 +139,7 @@ gl.vertexAttribPointer(
   gl.FLOAT,
   false,
   0,
-  Float32Array.BYTES_PER_ELEMENT * 2,
+  0,
 );
 gl.vertexAttribDivisor(joinPointLocation, 1);
 
@@ -159,7 +159,7 @@ gl.drawArraysInstanced(
   gl.TRIANGLE_FAN,
   0,
   roundJoinInstanceGeometry.length / 2,
-  lineSegmentCount - 1
+  path.length / 2
 );
 
 
