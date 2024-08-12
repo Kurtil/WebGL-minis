@@ -109,6 +109,7 @@ const joinProgram = makeProgram(
 );
 
 // a square that fits inside a circle drawn using triangle fan
+// and use signed distance function to draw the circle
 const roundJoinInstanceGeometry = new Float32Array([
   0, 0,
   1, 0,
