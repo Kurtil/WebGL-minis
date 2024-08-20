@@ -4,7 +4,9 @@ import { gl as GL, makeProgram } from "webglutils";
  */
 const gl = GL;
 
-import { rotation } from "../../../utils/math/mat3.js";
+const LINE_WIDTH = 1;
+
+import { rotation, multiply } from "../../../utils/math/mat3.js";
 import vertexShaderSource from "./shaders/vertex.js";
 import fragmentShaderSource from "./shaders/fragment.js";
 
@@ -17,9 +19,9 @@ const resolutionLocation = gl.getUniformLocation(program, "resolution");
 const matrixLocation = gl.getUniformLocation(program, "matrix");
 
 const positions = new Float32Array([
-  .5, 0,
+  0, 0,
   // .5, 0,
-  -.5, 0,
+  200, 0,
 ]);
 
 const pointCount = positions.length / 2;
@@ -35,12 +37,27 @@ gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, pointCount, 1, gl.RG, gl.FLOAT, positio
 gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
+const lineWidthLocation = gl.getUniformLocation(program, "line_width");
+
 let angle = 0;
+
+const projectionMatrix = [
+  2 / gl.drawingBufferWidth, 0, 0,
+  0, -2 / gl.drawingBufferHeight, 0,
+  -1, 1, 1,
+];
+const translationMatrix = [
+  1, 0, 0,
+  0, 1, 0,
+  gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2, 1,
+];
+
+gl.useProgram(program);
+
+gl.uniform1f(lineWidthLocation, LINE_WIDTH);
 
 function draw() {
   angle += 0.1;
-
-  gl.useProgram(program);
 
   gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
 
@@ -49,7 +66,7 @@ function draw() {
   gl.uniformMatrix3fv(
     matrixLocation,
     false,
-    rotationMatrix
+    multiply(rotationMatrix, multiply(translationMatrix, projectionMatrix))
   );
 
   gl.uniform1i(positionTextureLocation, positionTextureUnit);
