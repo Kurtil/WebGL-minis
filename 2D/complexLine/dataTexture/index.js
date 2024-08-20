@@ -4,7 +4,7 @@ import { gl as GL, makeProgram } from "webglutils";
  */
 const gl = GL;
 
-const LINE_WIDTH = 1;
+const LINE_WIDTH = 20;
 
 import { rotation, multiply } from "../../../utils/math/mat3.js";
 import vertexShaderSource from "./shaders/vertex.js";

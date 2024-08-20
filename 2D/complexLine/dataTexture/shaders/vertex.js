@@ -3,9 +3,8 @@ uniform sampler2D positionTexture;
 
 flat out int v_index;
 
-out vec2 start_position;
-out vec2 end_position;
-out vec2 point_position;
+out float half_line_width;
+out float distance_to_segment;
 
 uniform float line_width;
 
@@ -14,6 +13,8 @@ uniform mat3 matrix;
 void main() {
   int pointIndex = gl_VertexID / 2;
 
+  half_line_width  = line_width / 2.;
+
   v_index = gl_VertexID;
 
   vec2 currentPosition = texelFetch(positionTexture, ivec2(pointIndex, 0), 0).rg;
@@ -21,16 +22,14 @@ void main() {
 
   vec2 normal = normalize(vec2(currentPosition.y - adjacentPosition.y, adjacentPosition.x - currentPosition.x));
 
-  normal *= pointIndex % 2 == 0 ? 1.0 : -1.0;
+  float signMultiplier = (gl_VertexID == 0 || gl_VertexID == 3) ? 1.0 : -1.0;
+  normal *= signMultiplier;
 
-  vec2 offset = (normal * (float(gl_VertexID % 2) * 2.0 - 1.0) * (line_width / 2. + 1.));
-  vec2 position = currentPosition + offset;
+  vec2 position = currentPosition + normal * (half_line_width + 1.);
+
+  distance_to_segment = (half_line_width + 1.) * ((gl_VertexID == 0 || gl_VertexID == 2) ? 1.0 : -1.0);
 
   vec2 worldPosition = (matrix * vec3(position, 1)).xy;
-
-  start_position = currentPosition;
-  end_position = adjacentPosition;
-  point_position = position;
 
   gl_Position = vec4(worldPosition, 0, 1);
 }
