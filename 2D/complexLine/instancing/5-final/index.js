@@ -5,6 +5,7 @@ import { gl as GL, makeProgram, makeBuffer } from "webglutils";
 const gl = GL;
 
 const LINE_WIDTH = 20;
+const JOIN_TYPE = "miter";
 
 /**
  *            _________
@@ -39,17 +40,14 @@ const pathBuffer = makeBuffer(path);
 
 // INTERMEDIATE SEGMENTS
 
-import intermediateSegmentsVertexShaderSource from "./shaders/intermediateSegments/vertex.js";
-import intermediateSegmentsFragmentShaderSource from "./shaders/intermediateSegments/fragment.js";
+import intermediateSegmentsVertexShaderSource from "./shaders/segments/intermediateSegments/vertex.js";
+import intermediateSegmentsFragmentShaderSource from "./shaders/segments/intermediateSegments/fragment.js";
 
 {
   const program = makeProgram(
     intermediateSegmentsVertexShaderSource,
     intermediateSegmentsFragmentShaderSource
   );
-
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, segmentInstanceGeometryBuffer);
   const positionLocation = gl.getAttribLocation(program, "position");
@@ -138,19 +136,14 @@ import intermediateSegmentsFragmentShaderSource from "./shaders/intermediateSegm
 
 // TERMINAL SEGMENTS
 
-import terminalSegmentsVertexShaderSource from "./shaders/terminalSegments/vertex.js";
-import terminalSegmentsFragmentShaderSource from "./shaders/terminalSegments/fragment.js";
+import terminalSegmentsVertexShaderSource from "./shaders/segments/terminalSegments/vertex.js";
+import terminalSegmentsFragmentShaderSource from "./shaders/segments/terminalSegments/fragment.js";
 
 {
   const program = makeProgram(
     terminalSegmentsVertexShaderSource,
     terminalSegmentsFragmentShaderSource
   );
-
-  gl.useProgram(program);
-
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, segmentInstanceGeometryBuffer);
   const positionLocation = gl.getAttribLocation(program, "position");
@@ -207,6 +200,8 @@ import terminalSegmentsFragmentShaderSource from "./shaders/terminalSegments/fra
     Float32Array.BYTES_PER_ELEMENT * 4,
   );
   gl.vertexAttribDivisor(pointCLocation, 1);
+
+  gl.useProgram(program);
     
   const resolutionLocation = gl.getUniformLocation(program, "resolution");
   gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
@@ -229,99 +224,191 @@ import terminalSegmentsFragmentShaderSource from "./shaders/terminalSegments/fra
   );
 }
 
-// MITER JOIN
+// JOIN
 
-// import joinVertexShaderSource from "./shaders/miter/vertex.js";
-// import joinFragmentShaderSource from "./shaders/miter/fragment.js";
+import bevelJoinVertexShaderSource from "./shaders/joins/bevel/vertex.js";
+import bevelJoinFragmentShaderSource from "./shaders/joins/bevel/fragment.js";
 
-// const joinProgram = makeProgram(
-//   joinVertexShaderSource,
-//   joinFragmentShaderSource
-// );
+import miterJoinVertexShaderSource from "./shaders/joins/miter/vertex.js";
+import miterJoinFragmentShaderSource from "./shaders/joins/miter/fragment.js";
 
-// /** pseudo geometry used as coefficient use to index the miter basis vectors
-//  *  primitive = triangle fan
-//  * 
-//  *    p2 – p1 – p0
-//  *     \   |   /
-//  *      \  |  /
-//  *       \ | /
-//  *        \|/
-//  *       pointB
-//  */
-// const miterJoinInstanceGeometry = new Float32Array([
-//   0, 0, 0,
-//   1, 0, 0,
-//   0, 1, 0,
-//   0, 0, 1,
-// ]);
+if (JOIN_TYPE === "bevel") {
+  const program = makeProgram(
+    bevelJoinVertexShaderSource,
+    bevelJoinFragmentShaderSource
+  );
 
-// makeBuffer(miterJoinInstanceGeometry);
+  const bevelJoinInstanceGeometry = new Float32Array([
+    1, 0, 0,
+    0, 1, 0,
+    0, 0, 1,
+  ]);
 
-// const joinPositionLocation = gl.getAttribLocation(joinProgram, "position");
-// gl.enableVertexAttribArray(joinPositionLocation);
-// gl.vertexAttribPointer(
-//   joinPositionLocation,
-//   3,
-//   gl.FLOAT,
-//   false,
-//   0,
-//   0,
-// );
-// gl.vertexAttribDivisor(joinPositionLocation, 0);
+  makeBuffer(bevelJoinInstanceGeometry);
+  const positionLocation = gl.getAttribLocation(program, "position");
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(
+    positionLocation,
+    3,
+    gl.FLOAT,
+    false,
+    0,
+    0,
+  );
+  gl.vertexAttribDivisor(positionLocation, 0);
+  
+  gl.bindBuffer(gl.ARRAY_BUFFER, pathBuffer);
+  const point0Location = gl.getAttribLocation(program, "p0");
+  gl.enableVertexAttribArray(point0Location);
+  gl.vertexAttribPointer(
+    point0Location,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    0,
+  );
+  gl.vertexAttribDivisor(point0Location, 1);
+  
+  const point1Location = gl.getAttribLocation(program, "p1");
+  gl.enableVertexAttribArray(point1Location);
+  gl.vertexAttribPointer(
+    point1Location,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    Float32Array.BYTES_PER_ELEMENT * 2,
+  );
+  gl.vertexAttribDivisor(point1Location, 1);
+  
+  const point2Location = gl.getAttribLocation(program, "p2");
+  gl.enableVertexAttribArray(point2Location);
+  gl.vertexAttribPointer(
+    point2Location,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    Float32Array.BYTES_PER_ELEMENT * 4,
+  );
+  gl.vertexAttribDivisor(point2Location, 1);
 
-// gl.bindBuffer(gl.ARRAY_BUFFER, pathBuffer);
+  gl.useProgram(program);
 
-// const joinPointALocation = gl.getAttribLocation(joinProgram, "pointA");
-// gl.enableVertexAttribArray(joinPointALocation);
-// gl.vertexAttribPointer(
-//   joinPointALocation,
-//   2,
-//   gl.FLOAT,
-//   false,
-//   0,
-//   Float32Array.BYTES_PER_ELEMENT * 0,
-// );
-// gl.vertexAttribDivisor(joinPointALocation, 1);
+  const resolutionLocation = gl.getUniformLocation(program, "resolution");
+  gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
 
-// const joinPointBLocation = gl.getAttribLocation(joinProgram, "pointB");
-// gl.enableVertexAttribArray(joinPointBLocation);
-// gl.vertexAttribPointer(
-//   joinPointBLocation,
-//   2,
-//   gl.FLOAT,
-//   false,
-//   0,
-//   Float32Array.BYTES_PER_ELEMENT * 2,
-// );
-// gl.vertexAttribDivisor(joinPointBLocation, 1);
+  const widthLocation = gl.getUniformLocation(program, "width");
+  gl.uniform1f(widthLocation, LINE_WIDTH);
 
-// const joinPointCLocation = gl.getAttribLocation(joinProgram, "pointC");
-// gl.enableVertexAttribArray(joinPointCLocation);
-// gl.vertexAttribPointer(
-//   joinPointCLocation,
-//   2,
-//   gl.FLOAT,
-//   false,
-//   0,
-//   Float32Array.BYTES_PER_ELEMENT * 4,
-// );
-// gl.vertexAttribDivisor(joinPointCLocation, 1);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-// gl.useProgram(joinProgram);
+  const joinCount = path.length / 2 - 2;
+  const instanceGeometryCount = bevelJoinInstanceGeometry.length / 3;
 
-// const joinResolutionLocation = gl.getUniformLocation(joinProgram, "resolution");
-// gl.uniform2f(joinResolutionLocation, gl.canvas.width, gl.canvas.height);
+  gl.enable(gl.BLEND);
 
-// const joinWidthLocation = gl.getUniformLocation(joinProgram, "width");
-// gl.uniform1f(joinWidthLocation, LINE_WIDTH);
-
-// gl.drawArraysInstanced(
-//   gl.TRIANGLE_FAN,
-//   0,
-//   miterJoinInstanceGeometry.length / 3,
-//   path.length / 2 - 2
-// );
+  gl.drawArraysInstanced(
+    gl.TRIANGLES,
+    0,
+    instanceGeometryCount,
+    joinCount
+  );
+} else if (JOIN_TYPE === "miter") {
+  
+  const joinProgram = makeProgram(
+    miterJoinVertexShaderSource,
+    miterJoinFragmentShaderSource
+  );
+  
+  /** pseudo geometry used as coefficient use to index the miter basis vectors
+   *  primitive = triangle fan
+   * 
+   *    p2 – p1 – p0
+   *     \   |   /
+   *      \  |  /
+   *       \ | /
+   *        \|/
+   *         p3
+   */
+  const miterJoinInstanceGeometry = new Float32Array([
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1,
+  ]);
+  
+  makeBuffer(miterJoinInstanceGeometry);
+  
+  const joinPositionLocation = gl.getAttribLocation(joinProgram, "position");
+  gl.enableVertexAttribArray(joinPositionLocation);
+  gl.vertexAttribPointer(
+    joinPositionLocation,
+    4,
+    gl.FLOAT,
+    false,
+    0,
+    0,
+  );
+  gl.vertexAttribDivisor(joinPositionLocation, 0);
+  
+  gl.bindBuffer(gl.ARRAY_BUFFER, pathBuffer);
+  
+  const joinPointALocation = gl.getAttribLocation(joinProgram, "pointA");
+  gl.enableVertexAttribArray(joinPointALocation);
+  gl.vertexAttribPointer(
+    joinPointALocation,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    Float32Array.BYTES_PER_ELEMENT * 0,
+  );
+  gl.vertexAttribDivisor(joinPointALocation, 1);
+  
+  const joinPointBLocation = gl.getAttribLocation(joinProgram, "pointB");
+  gl.enableVertexAttribArray(joinPointBLocation);
+  gl.vertexAttribPointer(
+    joinPointBLocation,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    Float32Array.BYTES_PER_ELEMENT * 2,
+  );
+  gl.vertexAttribDivisor(joinPointBLocation, 1);
+  
+  const joinPointCLocation = gl.getAttribLocation(joinProgram, "pointC");
+  gl.enableVertexAttribArray(joinPointCLocation);
+  gl.vertexAttribPointer(
+    joinPointCLocation,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    Float32Array.BYTES_PER_ELEMENT * 4,
+  );
+  gl.vertexAttribDivisor(joinPointCLocation, 1);
+  
+  gl.useProgram(joinProgram);
+  
+  const joinResolutionLocation = gl.getUniformLocation(joinProgram, "resolution");
+  gl.uniform2f(joinResolutionLocation, gl.canvas.width, gl.canvas.height);
+  
+  const joinWidthLocation = gl.getUniformLocation(joinProgram, "width");
+  gl.uniform1f(joinWidthLocation, LINE_WIDTH);
+  
+  gl.drawArraysInstanced(
+    gl.TRIANGLE_FAN,
+    0,
+    miterJoinInstanceGeometry.length / 4,
+    path.length / 2 - 2
+  );
+} else {
+  // round join
+  
+}
 
 
 
