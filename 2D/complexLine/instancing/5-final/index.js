@@ -6,6 +6,7 @@ const gl = GL;
 
 const LINE_WIDTH = 20;
 const JOIN_TYPE = "miter";
+const MITER_LIMIT = 10;
 
 /**
  *            _________
@@ -398,6 +399,11 @@ if (JOIN_TYPE === "bevel") {
   
   const joinWidthLocation = gl.getUniformLocation(joinProgram, "width");
   gl.uniform1f(joinWidthLocation, LINE_WIDTH);
+
+  const joinMiterLimitLocation = gl.getUniformLocation(joinProgram, "miterLimit");
+  gl.uniform1f(joinMiterLimitLocation, MITER_LIMIT);
+
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   
   gl.drawArraysInstanced(
     gl.TRIANGLE_FAN,
@@ -407,7 +413,7 @@ if (JOIN_TYPE === "bevel") {
   );
 } else {
   // round join
-  
+
 }
 
 

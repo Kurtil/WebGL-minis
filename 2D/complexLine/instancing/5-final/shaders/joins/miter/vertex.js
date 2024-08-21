@@ -4,6 +4,10 @@ in vec2 pointA;
 in vec2 pointB;
 in vec2 pointC;
 
+out vec2 vMiter;
+out vec2 vOrigin;
+out vec2 vPoint;
+
 uniform vec2 resolution;
 uniform float width;
 
@@ -23,6 +27,10 @@ void main() {
   vec2 p2 = 0.5 * width * bendSign * (bendSign < 0.0 ? cbNorm : abNorm);
   vec2 p3 = -0.5 * miter * bendSign * width / dot(miter, abNorm);
   vec2 point = pointB + position.x * p0 + position.y * p1 + position.z * p2 + position.w * p3;
+
+  vMiter = bendSign * miter;
+  vOrigin = pointB;
+  vPoint = point;
 
   // projection
   vec2 clipPosition = (point * 2.0 - resolution) / resolution.y;
