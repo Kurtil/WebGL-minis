@@ -5,7 +5,7 @@ import { gl as GL, makeProgram, makeBuffer } from "webglutils";
 const gl = GL;
 
 const LINE_WIDTH = 20;
-const JOIN_TYPE = "miter";
+const JOIN_TYPE = "round";
 const MITER_LIMIT = 10;
 
 /**
@@ -233,6 +233,9 @@ import bevelJoinFragmentShaderSource from "./shaders/joins/bevel/fragment.js";
 import miterJoinVertexShaderSource from "./shaders/joins/miter/vertex.js";
 import miterJoinFragmentShaderSource from "./shaders/joins/miter/fragment.js";
 
+import roundJoinVertexShaderSource from "./shaders/joins/round/vertex.js";
+import roundJoinFragmentShaderSource from "./shaders/joins/round/fragment.js";
+
 if (JOIN_TYPE === "bevel") {
   const program = makeProgram(
     bevelJoinVertexShaderSource,
@@ -411,9 +414,97 @@ if (JOIN_TYPE === "bevel") {
     miterJoinInstanceGeometry.length / 4,
     path.length / 2 - 2
   );
-} else {
-  // round join
+} else if (JOIN_TYPE === "round") {
+  const joinProgram = makeProgram(
+    roundJoinVertexShaderSource,
+    roundJoinFragmentShaderSource
+  );
+  
+  /** pseudo geometry used as coefficient use to index the miter basis vectors
+   *  primitive = triangle fan
+   * 
+   *    p2 – p1 – p0
+   *     \   |   /
+   *      \  |  /
+   *       \ | /
+   *        \|/
+   *         p3
+   */
+  const roundJoinInstanceGeometry = new Float32Array([
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1,
+  ]);
+  
+  makeBuffer(roundJoinInstanceGeometry);
+  
+  const joinPositionLocation = gl.getAttribLocation(joinProgram, "position");
+  gl.enableVertexAttribArray(joinPositionLocation);
+  gl.vertexAttribPointer(
+    joinPositionLocation,
+    4,
+    gl.FLOAT,
+    false,
+    0,
+    0,
+  );
+  gl.vertexAttribDivisor(joinPositionLocation, 0);
+  
+  gl.bindBuffer(gl.ARRAY_BUFFER, pathBuffer);
+  
+  const joinPointALocation = gl.getAttribLocation(joinProgram, "pointA");
+  gl.enableVertexAttribArray(joinPointALocation);
+  gl.vertexAttribPointer(
+    joinPointALocation,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    Float32Array.BYTES_PER_ELEMENT * 0,
+  );
+  gl.vertexAttribDivisor(joinPointALocation, 1);
+  
+  const joinPointBLocation = gl.getAttribLocation(joinProgram, "pointB");
+  gl.enableVertexAttribArray(joinPointBLocation);
+  gl.vertexAttribPointer(
+    joinPointBLocation,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    Float32Array.BYTES_PER_ELEMENT * 2,
+  );
+  gl.vertexAttribDivisor(joinPointBLocation, 1);
+  
+  const joinPointCLocation = gl.getAttribLocation(joinProgram, "pointC");
+  gl.enableVertexAttribArray(joinPointCLocation);
+  gl.vertexAttribPointer(
+    joinPointCLocation,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    Float32Array.BYTES_PER_ELEMENT * 4,
+  );
+  gl.vertexAttribDivisor(joinPointCLocation, 1);
+  
+  gl.useProgram(joinProgram);
+  
+  const joinResolutionLocation = gl.getUniformLocation(joinProgram, "resolution");
+  gl.uniform2f(joinResolutionLocation, gl.canvas.width, gl.canvas.height);
+  
+  const joinWidthLocation = gl.getUniformLocation(joinProgram, "width");
+  gl.uniform1f(joinWidthLocation, LINE_WIDTH);
 
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  
+  gl.drawArraysInstanced(
+    gl.TRIANGLE_FAN,
+    0,
+    roundJoinInstanceGeometry.length / 4,
+    path.length / 2 - 2
+  );
 }
 
 
