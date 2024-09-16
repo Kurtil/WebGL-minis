@@ -2,6 +2,8 @@ import { gl as GL, makeProgram, makeBuffer } from "webglutils";
 import vertexShaderSource from "./shaders/vertex.js";
 import fragmentShaderSource from "./shaders/fragment.js";
 
+import drawPoints from "./points/drawPoints.js";
+
 /**
  * @type { WebGL2RenderingContext }
  */
@@ -32,7 +34,7 @@ const segmentIndexes = new Uint32Array([
   1, 2, 3, 0,
   4, 5, 6, 7, 0,
   8, 9, 10, 0,
-  // 11, 12, 0
+  11, 12, 0
 ]);
 
 const pointsTexture = gl.createTexture();
@@ -72,3 +74,5 @@ gl.uniform1i(gl.getUniformLocation(program, "points"), 0);
 gl.uniform2f(gl.getUniformLocation(program, "resolution"), gl.canvas.clientWidth, gl.canvas.clientHeight);
 
 gl.drawArraysInstanced(gl.LINE_STRIP, 0, segmentIndexes.length, isPointB.length);
+
+drawPoints(points);
