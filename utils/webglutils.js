@@ -2,6 +2,11 @@ const canvas = document.getElementById("canvas");
 /** @type { WebGL2RenderingContext } */
 const gl = canvas.getContext("webgl2", { antialias: false, stencil: true });
 
+gl.canvas.width = canvas.clientWidth * window.devicePixelRatio;
+gl.canvas.height = canvas.clientHeight * window.devicePixelRatio;
+
+gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
 /**
  * @param { string } vertexShaderSource
  * @param { string } fragmentShaderSource
