@@ -10,16 +10,17 @@ out vec4 outColor;
 /**
  * Signed distance to a segment - Inigo Quilez
  * https://iquilezles.org/articles/distfunctions2d/
+ * 
+ * Simplified version of the original function due to point and segment being relative from the origin (0, 0).
  **/
-float sdSegment( in vec2 p, in vec2 a, in vec2 b )
+float sdSegment( in vec2 point, in vec2 segment )
 {
-    vec2 pa = p-a, ba = b-a;
-    float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
-    return length( pa - ba*h );
+    float h = clamp( dot(point,segment)/dot(segment,segment), 0.0, 1.0 );
+    return length( point - segment*h );
 }
 
 void main() {
-  float d = sdSegment(vPoint, vec2(0, 0), vSegment);
+  float d = sdSegment(vPoint, vSegment);
   float alpha = step(0.0, d - vHalfWidth);
   outColor = vec4(0, 0, 0, 1. - alpha);
 }
