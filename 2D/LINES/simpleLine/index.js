@@ -77,7 +77,10 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
 // a 1 indexed array
 const segmentIndexes = new Uint32Array([
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+  1, 2, 3, 0,
+  4, 5, 6, 7, 0,
+  8, 9, 10, 0,
+  11, 12, 0,
 ]);
 makeBuffer(segmentIndexes);
 const pointAIndexAttributeLocation = gl.getAttribLocation(program, "pointAIndex");

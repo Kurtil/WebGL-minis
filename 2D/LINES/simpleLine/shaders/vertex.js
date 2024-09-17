@@ -9,6 +9,11 @@ uniform vec2 resolution;
 uniform float width;
 
 void main() {
+  if (pointAIndex == 0u || pointBIndex == 0u) {
+    gl_Position = vec4(0, 0, 0, 1); // discard
+    return;
+  }
+
   float x1 = texelFetch(points, ivec2(pointAIndex - 1u, 0), 0).x;
   float y1 = texelFetch(points, ivec2(pointAIndex - 1u, 0), 0).y;
   float x2 = texelFetch(points, ivec2(pointBIndex - 1u, 0), 0).x;
