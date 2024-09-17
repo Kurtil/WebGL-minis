@@ -2,7 +2,7 @@ import { gl as GL, makeProgram, makeBuffer } from "webglutils";
 import vertexShaderSource from "./shaders/vertex.js";
 import fragmentShaderSource from "./shaders/fragment.js";
 
-import drawPoints from "./points/drawPoints.js";
+import drawPoints from "../../../utils/points/drawPoints.js";
 
 /**
  * @type { WebGL2RenderingContext }
