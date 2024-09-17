@@ -8,6 +8,10 @@ uniform sampler2D points;
 uniform vec2 resolution;
 uniform float width;
 
+flat out float vHalfWidth;
+out vec2 vPoint;
+out vec2 vSegment;
+
 void main() {
   if (pointAIndex == 0u || pointBIndex == 0u) {
     gl_Position = vec4(0, 0, 0, 1); // discard
@@ -34,5 +38,9 @@ void main() {
 
   vec2 clipPosition = (point * 2.0 - resolution) / resolution.y;
   gl_Position = vec4(clipPosition, 0, 1);
+
+  vHalfWidth = width / 2.;
+  vPoint = point - pointA;
+  vSegment = segment;
 }
 `;

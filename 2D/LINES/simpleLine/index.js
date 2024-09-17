@@ -4,7 +4,7 @@ import { gl as GL, makeProgram, makeBuffer } from "webglutils";
  */
 const gl = GL;
 
-const LINE_WIDTH = 10;
+const LINE_WIDTH = 30;
 
 import vertexShaderSource from "./shaders/vertex.js";
 import fragmentShaderSource from "./shaders/fragment.js";
