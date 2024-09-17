@@ -29,14 +29,6 @@ const points = new Float32Array([
   450, 200
 ]);
 
-// a 1 indexed array
-const segmentIndexes = new Uint32Array([
-  1, 2, 3, 0,
-  4, 5, 6, 7, 0,
-  8, 9, 10, 0,
-  11, 12, 0
-]);
-
 const pointsTexture = gl.createTexture();
 gl.activeTexture(gl.TEXTURE0);
 gl.bindTexture(gl.TEXTURE_2D, pointsTexture);
@@ -46,6 +38,14 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
 const program = makeProgram(vertexShaderSource, fragmentShaderSource);
+
+// a 1 indexed array
+const segmentIndexes = new Uint32Array([
+  1, 2, 3, 0,
+  4, 5, 6, 7, 0,
+  8, 9, 10, 0,
+  11, 12, 0
+]);
 
 makeBuffer(segmentIndexes);
 const pointAAttributeLocation = gl.getAttribLocation(program, "pointA");
