@@ -29,7 +29,6 @@ gl.vertexAttribIPointer(
   positionLocation,
   2,
   gl.UNSIGNED_INT,
-  false,
   0,
   0,
 );
@@ -50,7 +49,6 @@ gl.vertexAttribIPointer(
   vertexOffsetLocation,
   2,
   gl.INT,
-  false,
   0,
   0,
 );
