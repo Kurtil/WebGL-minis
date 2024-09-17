@@ -5,6 +5,8 @@ flat in float vHalfWidth;
 in vec2 vPoint;
 in vec2 vSegment;
 
+uniform float aaOffset;
+
 out vec4 outColor;
 
 /**
@@ -21,12 +23,20 @@ float sdSegment( in vec2 point, in vec2 segment )
 
 void main() {
   float d = sdSegment(vPoint, vSegment);
-  float alpha = step(0.0, vHalfWidth - d);
 
-  if (alpha == 0.0) {
-    discard;
+  float colorAlpha = .2;
+
+  if (d < vHalfWidth) {
+    outColor = vec4(0, 0, 0, colorAlpha);
+    return;
   }
 
-  outColor = vec4(0, 0, 0, alpha);
+  // Gaussian AA
+  float sigma = aaOffset * .6; // .6 seems to be pretty close to the canvas 2D context
+  float alpha = exp(-0.5 * pow((d - vHalfWidth) / sigma, 2.));
+
+  outColor = vec4(0, 0, 0, alpha - (1. - colorAlpha));
+
+  gl_FragDepth = 1. - alpha;
 }
 `;

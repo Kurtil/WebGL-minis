@@ -26,6 +26,8 @@ export default function getDrawPoints(points) {
   return () => {
     gl.bindVertexArray(vao);
     gl.useProgram(pointsProgram);
+
+    gl.disable(gl.DEPTH_TEST);
   
     gl.uniform2f(resolutionUniformLocation, gl.canvas.clientWidth, gl.canvas.clientHeight);
     gl.uniform1f(pointSizeUniformLocation, 10);

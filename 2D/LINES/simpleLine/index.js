@@ -7,6 +7,8 @@ import { gl as GL, makeProgram, makeBuffer } from "webglutils";
  */
 const gl = GL;
 
+const AA_OFFSET = 1;
+
 import vertexShaderSource from "./shaders/vertex.js";
 import fragmentShaderSource from "./shaders/fragment.js";
 
@@ -97,6 +99,7 @@ gl.vertexAttribDivisor(pointBIndexAttributeLocation, 1);
 const resolutionLocation = gl.getUniformLocation(program, "resolution");
 const widthLocation = gl.getUniformLocation(program, "width");
 const pointsLocation = gl.getUniformLocation(program, "points");
+const aaOffsetLocation = gl.getUniformLocation(program, "aaOffset");
 
 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
@@ -110,9 +113,12 @@ function draw(lineWidth = 1) {
 
   gl.clear(gl.COLOR_BUFFER_BIT);
 
+  gl.enable(gl.DEPTH_TEST);
+
   gl.uniform1i(pointsLocation, pointsTextureNumber);
   gl.uniform2f(resolutionLocation, gl.canvas.clientWidth, gl.canvas.clientHeight);
   gl.uniform1f(widthLocation, lineWidth);
+  gl.uniform1f(aaOffsetLocation, AA_OFFSET);
   
   gl.drawArraysInstanced(
     gl.TRIANGLE_FAN,
