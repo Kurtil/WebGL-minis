@@ -24,12 +24,12 @@ gl.useProgram(program);
  *   (0, 0)  +    /    |
  *           |  /      |
  * (0, -0.5) |/________| (1, -0.5) 
+ * 
+ * Drawn using TRIANGLE_FAN primitive
  */
 const segmentInstanceGeometry =  new Float32Array([
   0, -0.5,
   1, -0.5,
-  1,  0.5,
-  0, -0.5,
   1,  0.5,
   0,  0.5
 ]);
@@ -81,7 +81,7 @@ const segmentIndexes = new Uint32Array([
   1, 2, 3, 0,
   4, 5, 6, 7, 0,
   8, 9, 10, 0,
-  11, 12, 0,
+  11, 12,
 ]);
 makeBuffer(segmentIndexes);
 const pointAIndexAttributeLocation = gl.getAttribLocation(program, "pointAIndex");
@@ -115,7 +115,7 @@ function draw(lineWidth = 1) {
   gl.uniform1f(widthLocation, lineWidth);
   
   gl.drawArraysInstanced(
-    gl.TRIANGLES,
+    gl.TRIANGLE_FAN,
     0,
     instanceGeometryCount,
     lineSegmentCount,
