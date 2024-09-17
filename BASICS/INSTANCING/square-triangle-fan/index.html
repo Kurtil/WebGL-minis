@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      background-color: azure;
+    }
+
+    .container {
+      height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <script type="importmap">
+          {
+            "imports": {
+              "webglutils": "/utils/webglutils.js"
+            }
+          }
+        </script>
+</head>
+
+<body>
+  <div class="container">
+    <canvas id="canvas" style="width: 500px; height: 500px; background-color: antiquewhite;"></canvas>
+  </div>
+
+  <script type="module" src="./index.js"></script>
+</body>
+
+</html>
