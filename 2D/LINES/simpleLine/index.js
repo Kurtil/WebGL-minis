@@ -112,3 +112,7 @@ gl.drawArraysInstanced(
   instanceGeometryCount,
   lineSegmentCount,
 );
+
+// POINTS for debugging
+import drawPoints from "../../../utils/points/drawPoints.js";
+drawPoints(points);
