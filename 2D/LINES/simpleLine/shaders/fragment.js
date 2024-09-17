@@ -22,6 +22,11 @@ float sdSegment( in vec2 point, in vec2 segment )
 void main() {
   float d = sdSegment(vPoint, vSegment);
   float alpha = step(0.0, vHalfWidth - d);
+
+  if (alpha == 0.0) {
+    discard;
+  }
+
   outColor = vec4(0, 0, 0, alpha);
 }
 `;
