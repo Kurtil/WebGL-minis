@@ -54,7 +54,6 @@ const points = new Float32Array([
   100, 100,
   200, 200,
   300, 100,
-
   // line 2
   400, 200,
   300, 300,

@@ -24,16 +24,15 @@ float sdSegment( in vec2 point, in vec2 segment )
 void main() {
   float d = sdSegment(vPoint, vSegment);
 
-  float colorAlpha = .2;
+  float colorAlpha = 1.;
 
   if (d < vHalfWidth) {
     outColor = vec4(0, 0, 0, colorAlpha);
     return;
   }
 
-  // Gaussian AA
-  float sigma = aaOffset * .6; // .6 seems to be pretty close to the canvas 2D context
-  float alpha = exp(-0.5 * pow((d - vHalfWidth) / sigma, 2.));
+  // AA
+  float alpha = 1. - smoothstep(vHalfWidth, vHalfWidth + aaOffset, d);
 
   outColor = vec4(0, 0, 0, alpha - (1. - colorAlpha));
 
