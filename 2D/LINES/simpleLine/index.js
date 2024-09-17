@@ -1,10 +1,11 @@
+import getDrawPoints from "../../../utils/points/drawPoints.js";
+import bind from "./rangeInput.js";
+
 import { gl as GL, makeProgram, makeBuffer } from "webglutils";
 /**
  * @type { WebGL2RenderingContext }
  */
 const gl = GL;
-
-const LINE_WIDTH = 30;
 
 import vertexShaderSource from "./shaders/vertex.js";
 import fragmentShaderSource from "./shaders/fragment.js";
@@ -102,17 +103,28 @@ gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 const lineSegmentCount = segmentIndexes.length - 1;
 const instanceGeometryCount = segmentInstanceGeometry.length / 2;
 
-gl.uniform1i(pointsLocation, pointsTextureNumber);
-gl.uniform2f(resolutionLocation, gl.canvas.clientWidth, gl.canvas.clientHeight);
-gl.uniform1f(widthLocation, LINE_WIDTH);
+const drawPoints = getDrawPoints(points);
 
-gl.drawArraysInstanced(
-  gl.TRIANGLES,
-  0,
-  instanceGeometryCount,
-  lineSegmentCount,
-);
+function draw(lineWidth = 1) {
+  gl.useProgram(program);
 
-// POINTS for debugging
-import drawPoints from "../../../utils/points/drawPoints.js";
-drawPoints(points);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  gl.uniform1i(pointsLocation, pointsTextureNumber);
+  gl.uniform2f(resolutionLocation, gl.canvas.clientWidth, gl.canvas.clientHeight);
+  gl.uniform1f(widthLocation, lineWidth);
+  
+  gl.drawArraysInstanced(
+    gl.TRIANGLES,
+    0,
+    instanceGeometryCount,
+    lineSegmentCount,
+  );
+  
+  // POINTS for debugging
+  drawPoints();
+}
+
+draw();
+
+bind(draw);

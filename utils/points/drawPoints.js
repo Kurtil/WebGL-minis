@@ -11,17 +11,28 @@ const pointsProgram = makeProgram(
 const resolutionUniformLocation = gl.getUniformLocation(pointsProgram, "resolution");
 const pointSizeUniformLocation = gl.getUniformLocation(pointsProgram, "pointSize");
 
-export default function drawPoints(points) {
+
+export default function getDrawPoints(points) {
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+
   makeBuffer(points);
-  
   const pointAttributeLocation = gl.getAttribLocation(pointsProgram, "point");
   gl.enableVertexAttribArray(pointAttributeLocation);
   gl.vertexAttribPointer(pointAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-  gl.useProgram(pointsProgram);
+  gl.bindVertexArray(null);
 
-  gl.uniform2f(resolutionUniformLocation, gl.canvas.clientWidth, gl.canvas.clientHeight);
-  gl.uniform1f(pointSizeUniformLocation, 10);
+  return () => {
+    gl.bindVertexArray(vao);
+    gl.useProgram(pointsProgram);
+  
+    gl.uniform2f(resolutionUniformLocation, gl.canvas.clientWidth, gl.canvas.clientHeight);
+    gl.uniform1f(pointSizeUniformLocation, 10);
+  
+    gl.drawArrays(gl.POINTS, 0, points.length / 2);
 
-  gl.drawArrays(gl.POINTS, 0, points.length / 2);
+    gl.bindVertexArray(null);
+  }
+
 }
