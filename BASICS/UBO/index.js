@@ -56,12 +56,14 @@ const dataBindingPoint = 0;
 gl.uniformBlockBinding(program, blockIndex, dataBindingPoint);
 
 const data = gl.createBuffer();
-gl.bindBuffer(gl.UNIFORM_BUFFER, data);
+gl.bindBuffer(gl.UNIFORM_BUFFER, data); // X
+// The next line can be used instead of the X lines if only one program using UBO is used. Else, bindBufferBase must be called at rendering time. bindBufferBase binds the buffer to the target (gl.UNIFORM_BUFFER) AND the binding point (dataBindingPoint).
+// gl.bindBufferBase(gl.UNIFORM_BUFFER, dataBindingPoint, data);
 gl.bufferData(gl.UNIFORM_BUFFER, points, gl.STATIC_DRAW);
 
 // RENDERING
 gl.useProgram(program);
 
-gl.bindBufferBase(gl.UNIFORM_BUFFER, dataBindingPoint, data);
+gl.bindBufferBase(gl.UNIFORM_BUFFER, dataBindingPoint, data); // X
 
 gl.drawArrays(gl.LINE_LOOP, 0, 4);
