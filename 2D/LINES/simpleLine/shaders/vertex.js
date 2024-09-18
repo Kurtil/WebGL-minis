@@ -1,5 +1,4 @@
 export default `
-in vec2 position; // from the instance geometry
 in uint pointAIndex;
 in uint pointBIndex;
 
@@ -29,6 +28,21 @@ void main() {
 
   vec2 pointA = vec2(x1, y1);
   vec2 pointB = vec2(x2, y2);
+
+  /**
+   * Dynamically calculate the position of the instance vertex
+   * 
+   *  (0, 0.5)  0 _________ 3  (1, 0.5) 
+   *             |        /|   
+   *             |      /  |  
+   *             |    /    |  
+   *             |  /      |  
+   *             |/________|  
+   * (0, -0.5)  1           2  (1, -0.5) 
+   *
+   * Drawn using TRIANGLE_FAN primitive
+   */
+  vec2 position = vec2(gl_VertexID / 2, float((gl_VertexID -1 & 2) / 2 ) - .5);
 
   vec2 segment = pointB - pointA;
   vec2 normal = normalize(vec2(-segment.y, segment.x));

@@ -19,36 +19,6 @@ const program = makeProgram(
 
 gl.useProgram(program);
 
-/**
- *            _________
- *  (0, 0.5) |        /| (1, 0.5) 
- *           |      /  |
- *   (0, 0)  +    /    |
- *           |  /      |
- * (0, -0.5) |/________| (1, -0.5) 
- * 
- * Drawn using TRIANGLE_FAN primitive
- */
-const segmentInstanceGeometry =  new Float32Array([
-  0, -0.5,
-  1, -0.5,
-  1,  0.5,
-  0,  0.5
-]);
-
-makeBuffer(segmentInstanceGeometry);
-const positionLocation = gl.getAttribLocation(program, "position");
-gl.enableVertexAttribArray(positionLocation);
-gl.vertexAttribPointer(
-  positionLocation,
-  2,
-  gl.FLOAT,
-  false,
-  0,
-  0,
-);
-gl.vertexAttribDivisor(positionLocation, 0);
-
 const points = new Float32Array([
   // line 1
   100, 100,
@@ -103,7 +73,7 @@ const aaOffsetLocation = gl.getUniformLocation(program, "aaOffset");
 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 const lineSegmentCount = segmentIndexes.length - 1;
-const instanceGeometryCount = segmentInstanceGeometry.length / 2;
+const instanceGeometryCount = 4;
 
 const drawPoints = getDrawPoints(points);
 
