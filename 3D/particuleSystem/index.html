@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebGL2 Particle System (Transform Feedback)</title>
+  <style>
+    body { background: #222; color: #eee; font-family: sans-serif; }
+    label { margin-right: 1em; }
+    #controls { margin-bottom: 1em; }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <label>
+      <input type="checkbox" id="gravity-toggle" checked>
+      Gravity
+    </label>
+    <label>
+      <input type="range" id="speed-range" min="0" max="1" step="0.001" value="0.02">
+      Speed
+    </label>
+    <label>
+      <input type="range" id="count-range" min="100" max="2000" step="10" value="500">
+      Particle Count
+    </label>
+    <span id="count-label">500</span>
+  </div>
+  <canvas width="800" height="600"></canvas>
+  <script src="index.js"></script>
+</body>
+</html>
