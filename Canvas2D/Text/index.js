@@ -1,36 +1,36 @@
+const content = "Hello World!";
+const style = {
+  fontSize: 50,
+  fontWeight: "normal",
+  fontFamily: "serif",
+  fontStyle: "normal",
+  fill: 0x000000,
+};
 
-const canvas = document.getElementById('c1');
-const ctx = canvas.getContext('2d');
+const offscreenCanvas = document.getElementById("c");
 
-const canvas2 = document.getElementById('c2');
-const ctx2 = canvas2.getContext('2d');
+const ctx = offscreenCanvas.getContext("2d", {
+  willReadFrequently: true,
+});
 
-const aReallyLongString = 'This is a really long string that will be split into multiple lines when drawn on the canvas using the fillText method.';
-const str = aReallyLongString.repeat(1);
+// ctx.font = `${style.fontWeight} ${style.fontSize}px ${style.fontFamily} ${style.fontStyle}`;
+ctx.font  = "50px serif";
 
-const { width, height } = canvas;
+const measure = ctx.measureText(content);
 
-ctx.font = '48px serif';
+/** @type {number} */
+const width = Math.ceil(measure.width * window.devicePixelRatio);
+/** @type {number} */
+const height = Math.ceil((measure.fontBoundingBoxAscent + measure.fontBoundingBoxDescent) * window.devicePixelRatio);
 
-function draw() {
-  ctx.clearRect(0, 0, width, height);
-  for (let i = 0; i < 20; i++) {
-    ctx.fillText(str, width / 2, height / 2);
-    ctx.translate(width / 2, height / 2);
-    ctx.rotate(Math.PI / 180);
-    ctx.translate(-width / 2, -height / 2);
-  }
-}
 
-async function loop() {
-  draw();
-  requestAnimationFrame(loop);
-  const bm = await window.createImageBitmap(canvas);
-  ctx2.clearRect(0, 0, width, height);
-  ctx2.drawImage(bm, 0, 0);
-  const nbm = await window.createImageBitmap(canvas2);
-  ctx.clearRect(0, 0, width, height);
-  ctx.drawImage(nbm, 0, 0);
-}
+offscreenCanvas.width = width;
+offscreenCanvas.height = height;
 
-loop();
+ctx.clearRect(0, 0, width, height);
+
+ctx.font  = "50px serif";
+
+ctx.fillStyle = `#${style.fill.toString(16).padStart(6, "0")}`;
+
+ctx.fillText(content, 0, measure.fontBoundingBoxAscent);

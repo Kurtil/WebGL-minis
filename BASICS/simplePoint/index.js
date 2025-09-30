@@ -3,7 +3,7 @@ import { gl, makeProgram } from "webglutils";
 const vertexShaderSource = `
 void main()
 {
-  gl_PointSize = 300.0;
+  // gl_PointSize = 10.0;
   gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
 }`;
 
@@ -19,7 +19,7 @@ void main()
 
 const program = makeProgram(vertexShaderSource, fragmentShaderSource);
 
-gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+gl.viewport(240, 240, 260, 260);
 
 gl.useProgram(program);
 
